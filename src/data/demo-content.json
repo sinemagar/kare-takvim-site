@@ -1,0 +1,40 @@
+{
+  "_note": "DEMO içerik. Olaylar yaygın bilinen resmî/uluslararası günlerdir ama editoryal kaynak kontrolünden GEÇMEMİŞTİR. Sözler anonim Türk atasözleridir. Yayın öncesi silinmeli veya kaynakla doğrulanmalıdır.",
+  "events": [
+    ["01-01","resmi","Yılbaşı","Miladi takvime göre yeni yılın ilk günü. Türkiye'de resmî tatildir."],
+    ["03-08","uluslararasi","Dünya Kadınlar Günü","Kadınların eşitlik ve hak mücadelesini anmak için her yıl 8 Mart'ta kutlanır."],
+    ["03-14","meslek","Tıp Bayramı","Türkiye'de hekimlerin ve sağlık çalışanlarının emeğini anmak için kutlanır."],
+    ["03-18","anma","Çanakkale Zaferi ve Şehitleri Anma Günü","1915'te Çanakkale Boğazı'nda kazanılan deniz zaferinin yıl dönümü."],
+    ["04-23","resmi","Ulusal Egemenlik ve Çocuk Bayramı","Türkiye Büyük Millet Meclisi'nin 1920'de açılışının yıl dönümü."],
+    ["05-01","resmi","Emek ve Dayanışma Günü","Çalışanların hak ve dayanışma günü. Türkiye'de resmî tatildir."],
+    ["05-19","resmi","Atatürk'ü Anma, Gençlik ve Spor Bayramı","Mustafa Kemal'in 1919'da Samsun'a çıkışının yıl dönümü."],
+    ["06-05","uluslararasi","Dünya Çevre Günü","Birleşmiş Milletler'in çevre farkındalığı için belirlediği gün."],
+    ["07-15","resmi","Demokrasi ve Millî Birlik Günü","2016 darbe girişimine karşı gösterilen direnişin anma günü."],
+    ["08-30","resmi","Zafer Bayramı","1922'de Büyük Taarruz'un zaferle sonuçlanmasının yıl dönümü."],
+    ["10-29","resmi","Cumhuriyet Bayramı","Türkiye Cumhuriyeti'nin 1923'te ilan edilişinin yıl dönümü."],
+    ["11-10","anma","Atatürk'ü Anma Günü","Mustafa Kemal Atatürk'ün 10 Kasım 1938'deki vefatının yıl dönümü."],
+    ["11-17","uluslararasi","Dünya Öğrenciler Günü","1939 Prag öğrenci olaylarının anısına her yıl 17 Kasım'da anılır."],
+    ["11-20","uluslararasi","Dünya Çocuk Hakları Günü","BM Çocuk Haklarına Dair Sözleşme'nin 1989'da kabul edildiği gün."],
+    ["11-24","meslek","Öğretmenler Günü","Türkiye'de öğretmenlerin emeğini onurlandırmak için kutlanır."],
+    ["11-25","uluslararasi","Kadına Yönelik Şiddete Karşı Uluslararası Mücadele Günü","Kadına yönelik şiddete dikkat çekmek için BM tarafından tanınan gün."],
+    ["12-03","uluslararasi","Dünya Engelliler Günü","Engelli bireylerin hakları ve katılımı için BM'nin belirlediği gün."],
+    ["12-05","anma","Dünya Kadın Hakları Günü","Türkiye'de kadınlara 1934'te milletvekili seçme ve seçilme hakkı tanınmasının yıl dönümü."],
+    ["12-10","uluslararasi","İnsan Hakları Günü","İnsan Hakları Evrensel Beyannamesi'nin 1948'de kabul edildiği gün."]
+  ],
+  "quotes": [
+    "Damlaya damlaya göl olur.",
+    "Bugünün işini yarına bırakma.",
+    "Ağaç yaş iken eğilir.",
+    "Sakla samanı, gelir zamanı.",
+    "Bin bilsen de bir bilene danış.",
+    "Emek olmadan yemek olmaz.",
+    "Az olsun, öz olsun.",
+    "Ayağını yorganına göre uzat.",
+    "Dost kara günde belli olur.",
+    "İşleyen demir ışıldar.",
+    "Tatlı dil yılanı deliğinden çıkarır.",
+    "Komşu komşunun külüne muhtaçtır.",
+    "Gülme komşuna, gelir başına.",
+    "Acele işe şeytan karışır."
+  ]
+}

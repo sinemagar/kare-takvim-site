@@ -1,0 +1,34 @@
+/* KareTakvim tasarım token'ları — mobil src/theme/tokens.ts ile aynı değerler. */
+:root {
+  --c-bg: #f2ebe1;
+  --c-leaf: #f8f3eb;
+  --c-ink: #2a2521;
+  --c-ink-muted: #5f564e;
+  --c-accent: #7e2f36;
+  --c-accent-ink: #ffffff;
+  --c-terracotta: #d8a08a;
+  --c-sage: #b8b59f;
+  --c-sand: #e7d5c2;
+  --c-line: #d9cdbf;
+  --c-focus: #1f5f8b;
+  --c-danger: #9a2a1f;
+
+  --font-serif: 'Lora Variable', Lora, Georgia, 'Times New Roman', serif;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow-leaf: 0 1px 0 rgba(42, 37, 33, 0.04), 0 12px 32px -12px rgba(42, 37, 33, 0.22);
+  --tap: 44px;
+
+  /* Gerçek görsel geldiğinde: --leaf-image: url('/paper/leaf-portrait.png'); */
+  --leaf-image: none;
+}

@@ -1,0 +1,53 @@
+---
+import '@fontsource-variable/lora/index.css';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  current?: '/' | '/hakkinda' | '/sss' | '/gizlilik' | '/iletisim';
+}
+const {
+  title,
+  description = 'KareTakvim: eski günlük yaprak takvimi hissiyle bugünün önemli günü, günün sözü, güneş saatleri ve güne özel notun.',
+  current,
+} = Astro.props;
+const fullTitle = title ? `${title} · KareTakvim` : 'KareTakvim — Günün yaprağı';
+const links = [
+  { href: '/', label: 'Günün yaprağı' },
+  { href: '/hakkinda', label: 'Hakkında' },
+  { href: '/sss', label: 'SSS' },
+  { href: '/gizlilik', label: 'Gizlilik' },
+  { href: '/iletisim', label: 'İletişim' },
+] as const;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined;
+---
+
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#F2EBE1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="tr_TR" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">İçeriğe geç</a>
+    <slot />
+    <nav class="site-nav" aria-label="Site">
+      {
+        links.map((l) => (
+          <a href={l.href} aria-current={current === l.href ? 'page' : undefined}>
+            {l.label}
+          </a>
+        ))
+      }
+    </nav>
+  </body>
+</html>

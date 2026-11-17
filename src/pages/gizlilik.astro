@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Gizlilik" current="/gizlilik" description="KareTakvim gizlilik açıklaması: notlar tarayıcıda kalır, konum istenmez.">
+  <main id="main" class="prose">
+    <div class="prose-card">
+      <h1>Gizlilik</h1>
+      <p class="lead">Kısaca: notun sende kalır, konumunu istemeyiz, hesap açtırmayız.</p>
+
+      <h2>Notlar</h2>
+      <p>Web sitesinde yazdığın notlar yalnızca bu tarayıcının yerel deposunda (localStorage) saklanır. Notlar sunucumuza, içerik servisimize veya herhangi bir analitik aracına gönderilmez. Mobil uygulamadaki notlarla eşitlenmez.</p>
+      <p>Tarayıcı verilerini, çerezleri ve site verilerini temizlersen ya da gizli pencere kullanırsan notların kaybolur. Bir notu yaprağın altındaki "Sil" düğmesiyle tek tek silebilirsin.</p>
+
+      <h2>Şehir seçimi</h2>
+      <p>Güneş saatleri için seçtiğin şehir yine bu tarayıcıda ve paylaştığın bağlantıda tutulur. GPS veya cihaz konumu istenmez.</p>
+
+      <h2>Günlük içerik</h2>
+      <p>Yaprağın önemli gün ve söz içeriği, herkese açık bir içerik servisinden (Supabase) salt okunur olarak alınır. Bu istekte notun veya kişisel bilgin yer almaz. Alınan içerik çevrimdışı gösterim için tarayıcında önbelleğe alınabilir.</p>
+
+      <h2>Çerez ve analitik</h2>
+      <p>Bu sürümde reklam, izleme çerezi veya analitik aracı kullanılmaz. İleride toplu kullanım ölçümü eklenirse not içeriği ve konum hiçbir zaman ölçülmez; bu sayfa güncellenir.</p>
+
+      <h2>İletişim</h2>
+      <p>Sorular için <a href="/iletisim">iletişim sayfasına</a> bakabilirsin.</p>
+    </div>
+  </main>
+</Base>

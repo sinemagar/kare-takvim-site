@@ -1,0 +1,121 @@
+---
+// Günlük yaprak iskeleti. İçeriği src/scripts/day-page.ts doldurur.
+// Tüm metin seçilebilir DOM metnidir; görsel yalnızca dekorasyondur.
+import LeafArt from './LeafArt.astro';
+import { NOTE_MAX_LENGTH } from '../lib/notes';
+---
+
+<article class="leaf" aria-labelledby="leaf-title" data-leaf aria-busy="true">
+  <div class="perforation" aria-hidden="true"></div>
+
+  <header class="leaf-head">
+    <nav class="leaf-nav" aria-label="Tarih gezinme">
+      <button type="button" class="btn btn--icon btn--ghost" data-prev aria-label="Önceki gün">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+      <div class="leaf-title">
+        <h1 id="leaf-title">
+          <span class="visually-hidden" data-long>Günün yaprağı</span>
+          <span aria-hidden="true" data-month-year>&nbsp;</span>
+        </h1>
+        <p class="weekday" aria-hidden="true" data-weekday>&nbsp;</p>
+      </div>
+      <button type="button" class="btn btn--icon btn--ghost" data-next aria-label="Sonraki gün">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+    </nav>
+    <div class="leaf-tools">
+      <label class="date-field">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"></rect><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path></svg>
+        <span class="visually-hidden">Tarih seç</span>
+        <input type="date" data-date-input />
+      </label>
+      <button type="button" class="btn btn--ghost today-btn" data-today hidden>Bugüne dön</button>
+    </div>
+  </header>
+
+  <div class="leaf-body">
+    <div class="leaf-date">
+      <p class="day-number" aria-hidden="true" data-day-number>&nbsp;</p>
+    </div>
+
+    <div class="leaf-content">
+      <section class="event" aria-labelledby="event-label" data-event>
+        <p class="eyebrow" id="event-label">Önemli gün</p>
+        <div data-event-body>
+          <div class="skeleton skeleton--title"></div>
+          <div class="skeleton"></div>
+        </div>
+      </section>
+
+      <figure class="quote" data-quote hidden>
+        <figcaption class="quote-label">Günün sözü</figcaption>
+        <blockquote><p data-quote-text></p></blockquote>
+        <p class="quote-source" data-quote-source></p>
+      </figure>
+
+      <section class="sun" aria-labelledby="sun-label">
+        <h2 class="visually-hidden" id="sun-label">Güneş saatleri</h2>
+        <button type="button" class="city-btn" data-city-open aria-haspopup="dialog">
+          <span class="visually-hidden">Şehir: </span><span data-city-name>İstanbul</span>
+          <span class="city-change" aria-hidden="true">değiştir</span>
+        </button>
+        <dl class="sun-times">
+          <div>
+            <dt>Doğuş</dt>
+            <dd data-sunrise>--:--</dd>
+          </div>
+          <div>
+            <dt>Batış</dt>
+            <dd data-sunset>--:--</dd>
+          </div>
+        </dl>
+      </section>
+
+      <p class="status" role="status" aria-live="polite" data-status></p>
+    </div>
+  </div>
+
+  <section class="note" aria-labelledby="note-label" data-note>
+    <h2 id="note-label" class="note-label">Bu güne notun</h2>
+    <div data-note-view hidden>
+      <p class="note-text" data-note-text></p>
+      <div class="note-actions">
+        <button type="button" class="btn" data-note-edit>Düzenle</button>
+        <button type="button" class="btn btn--ghost" data-note-delete>Sil</button>
+      </div>
+    </div>
+    <form data-note-form>
+      <label for="note-input" class="visually-hidden">Bu güne not</label>
+      <textarea id="note-input" rows="3" maxlength={NOTE_MAX_LENGTH} placeholder="Bu güne kısa bir not yaz…" data-note-input></textarea>
+      <div class="note-actions">
+        <button type="submit" class="btn btn--primary">Kaydet</button>
+        <button type="button" class="btn btn--ghost" data-note-cancel hidden>Vazgeç</button>
+      </div>
+    </form>
+    <p class="note-privacy">
+      Notun yalnızca bu tarayıcıda saklanır; hesabına veya sunucuya gönderilmez. Tarayıcı verilerini temizlersen kaybolur.
+      <a href="/gizlilik">Ayrıntılar</a>
+    </p>
+  </section>
+
+  <footer class="leaf-foot">
+    <span class="brand">KareTakvim</span>
+    <span class="demo-badge" data-demo-badge hidden>Demo içerik — editoryal kontrolden geçmedi</span>
+  </footer>
+
+  <LeafArt />
+</article>
+
+<dialog class="city-dialog" data-city-dialog aria-labelledby="city-dialog-title">
+  <form method="dialog" class="city-dialog-inner">
+    <div class="city-dialog-head">
+      <h2 id="city-dialog-title">Şehir seç</h2>
+      <button class="btn btn--icon btn--ghost" value="cancel" aria-label="Kapat">✕</button>
+    </div>
+    <p class="city-hint">Güneş saatleri seçtiğin il merkezine göre hesaplanır. Konum izni istenmez.</p>
+    <label for="city-search" class="visually-hidden">Şehir ara</label>
+    <input id="city-search" type="search" placeholder="Şehir ara…" autocomplete="off" data-city-search />
+    <ul class="city-list" data-city-list></ul>
+  </form>
+</dialog>

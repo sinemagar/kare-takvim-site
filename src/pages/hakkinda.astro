@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+const appStore = import.meta.env.PUBLIC_APPSTORE_URL;
+const play = import.meta.env.PUBLIC_PLAY_URL;
+---
+
+<Base title="Hakkında" current="/hakkinda" description="KareTakvim nedir: günlük yaprak takvimi, önemli gün, günün sözü, güneş saatleri ve güne özel not.">
+  <main id="main" class="prose">
+    <div class="prose-card">
+      <h1>Her gün tek bir yaprak</h1>
+      <p class="lead">KareTakvim, eski günlük yaprak takvimlerinin sade hissini telefona ve tarayıcıya taşır.</p>
+
+      <h2>Yaprakta neler var?</h2>
+      <ul>
+        <li>Tarih ve haftanın günü</li>
+        <li>Varsa o günün önemli günü ya da tarihî olayı, kısa açıklaması ve kaynağı</li>
+        <li>Günün sözü</li>
+        <li>Seçtiğin şehirde güneşin doğuş ve batış saati</li>
+        <li>O güne yazdığın kısa not</li>
+      </ul>
+
+      <h2>Neler yok?</h2>
+      <p>Hesap açma, reklam takibi, konum izni, görev listesi ya da sosyal akış yok. Notların cihazında kalır.</p>
+
+      <h2>Mobil uygulama ve widget</h2>
+      <p>iOS ve Android uygulamasında günün yaprağını ana ekran widget'ı olarak da görebilirsin. Widget önemli olayı öne çıkarır; kişisel notunu göstermez.</p>
+      {
+        appStore || play ? (
+          <p>
+            {appStore && <a href={appStore}>App Store'da KareTakvim</a>}
+            {appStore && play && ' · '}
+            {play && <a href={play}>Google Play'de KareTakvim</a>}
+          </p>
+        ) : (
+          <p>Uygulama mağaza bağlantıları yayına çıkınca burada olacak.</p>
+        )
+      }
+
+      <p><a class="btn btn--primary" href="/">Günün yaprağını aç</a></p>
+    </div>
+  </main>
+</Base>

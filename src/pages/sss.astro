@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+const faqs = [
+  ['Günlük içerik nereden geliyor?', 'Önemli gün ve sözler editoryal olarak hazırlanıp kaynak kontrolünden geçtikten sonra yayımlanır. Kaynağı doğrulanmamış bilgi gösterilmez. Bilgi olmayan güne olay eklenmez; yaprakta "yayımlanmış bilgi yok" yazar.'],
+  ['Sözün yazarı neden bazen yazmıyor?', 'Yazarı kesin olarak doğrulanamayan sözleri kimseye atfetmeyiz. Atasözü gibi anonim sözlerde yalnızca türü belirtilir.'],
+  ['Güneş saatleri nasıl hesaplanıyor?', 'Seçtiğin ilin merkez koordinatlarından, cihazında hesaplanır. Konum izni istenmez. Saatler Türkiye saatiyle ve 24 saat biçimindedir; ilçe ve rakıma göre birkaç dakika fark olabilir.'],
+  ['Notlarım nerede saklanıyor?', 'Web sitesinde yalnızca bu tarayıcının yerel deposunda, mobil uygulamada yalnızca telefonundaki veritabanında. Notlar sunucuya gönderilmez ve cihazlar arasında eşitlenmez.'],
+  ['Tarayıcı verilerini silersem ne olur?', 'Web notların silinir. Bunun yedeği yoktur.'],
+  ['Belirli bir günü paylaşabilir miyim?', 'Evet. Adres çubuğundaki bağlantı seçtiğin tarihi ve şehri içerir; açan kişi aynı yaprağı görür. Notun bağlantıya eklenmez.'],
+  ["Widget'ı nasıl eklerim?", "Mobil uygulamayı kurduktan sonra ana ekranda boş bir yere basılı tut, widget galerisinden KareTakvim'i seç. Web sitesi widget sunmaz."],
+  ['Bir hata ya da yanlış bilgi gördüm.', 'İletişim sayfasındaki adrese tarih ve bilgiyle birlikte yazman yeterli.'],
+] as const;
+---
+
+<Base title="Sık sorulan sorular" current="/sss" description="KareTakvim hakkında sık sorulan sorular: içerik, güneş saatleri, notlar ve widget.">
+  <main id="main" class="prose">
+    <div class="prose-card">
+      <h1>Sık sorulan sorular</h1>
+      {
+        faqs.map(([q, a]) => (
+          <>
+            <h2>{q}</h2>
+            <p>{a}</p>
+          </>
+        ))
+      }
+    </div>
+  </main>
+</Base>

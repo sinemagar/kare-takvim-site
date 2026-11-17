@@ -1,0 +1,24 @@
+---
+import Base from '../layouts/Base.astro';
+const email = import.meta.env.PUBLIC_CONTACT_EMAIL;
+---
+
+<Base title="İletişim" current="/iletisim" description="KareTakvim'e hata ve içerik düzeltme bildirimi.">
+  <main id="main" class="prose">
+    <div class="prose-card">
+      <h1>İletişim</h1>
+      <p class="lead">Bir hata, yanlış bilgi ya da öneri için bize yaz.</p>
+      {
+        email ? (
+          <p>
+            E-posta: <a href={`mailto:${email}?subject=${encodeURIComponent('KareTakvim geri bildirim')}`}>{email}</a>
+          </p>
+        ) : (
+          <p>İletişim adresi yakında burada olacak.</p>
+        )
+      }
+      <h2>İçerik düzeltme bildirimi</h2>
+      <p>Lütfen ilgili tarihi, yapraktaki bilgiyi ve doğru olduğunu düşündüğün kaynağı ekle. Kaynakla doğrulanan düzeltmeler yayımlanır.</p>
+    </div>
+  </main>
+</Base>

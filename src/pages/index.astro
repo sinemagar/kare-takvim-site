@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import Leaf from '../components/Leaf.astro';
+import '../styles/leaf.css';
+---
+
+<Base current="/">
+  <main id="main" class="stage">
+    <Leaf />
+  </main>
+  <noscript>
+    <p class="prose">Günün yaprağı tarayıcıda JavaScript ile hazırlanır. Tarih, içerik ve not özellikleri için JavaScript'i açman gerekir.</p>
+  </noscript>
+</Base>
+
+<script>
+  import '../scripts/day-page';
+</script>
