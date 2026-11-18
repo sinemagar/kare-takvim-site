@@ -19,11 +19,12 @@ export function categoryKey(category: string | null | undefined): CategoryKey {
   return (CATEGORY_KEYS as readonly string[]).includes(slug) ? (slug as CategoryKey) : 'genel';
 }
 
-export type PageArtKey = 'ozel-gun' | 'dini';
+export type PageArtKey = 'ozel-gun' | 'milli' | 'dini';
 
 /** Özel günlerde yaprağa konan geniş görsel. Anma günlerinde ve sıradan günlerde görsel yok. */
 export function pageArtKey(day: Pick<DayContent, 'theme' | 'events'> | null): PageArtKey | null {
   if (!day || day.events[0]?.tier !== 'ozel') return null;
   if (day.theme === 'anma') return null;
+  if (day.theme === 'milli') return 'milli';
   return day.theme === 'dini' ? 'dini' : 'ozel-gun';
 }
