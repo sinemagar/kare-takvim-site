@@ -10,8 +10,6 @@ import { NOTE_MAX_LENGTH } from '../lib/notes';
   <div class="pad-sheet pad-sheet--near" aria-hidden="true"></div>
   <article class="leaf" aria-labelledby="leaf-title" data-leaf aria-busy="true">
     <header class="band">
-      <span class="hole hole--l" aria-hidden="true"></span>
-      <span class="hole hole--r" aria-hidden="true"></span>
       <nav class="band-nav" aria-label="Tarih gezinme">
         <button type="button" class="band-btn" data-prev aria-label="Önceki gün">
           <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
@@ -91,20 +89,30 @@ import { NOTE_MAX_LENGTH } from '../lib/notes';
         <h2 class="visually-hidden" id="sun-label">Güneş saatleri</h2>
         <div class="sun-row">
           <button type="button" class="city-btn" data-city-open aria-haspopup="dialog">
-            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" class="sun-icon"><circle cx="12" cy="12" r="4" fill="currentColor"></circle><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4l1.4 1.4M2 12h2m16 0h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="var(--c-accent)"></path><circle cx="12" cy="10" r="2.6" fill="#fff"></circle></svg>
             <span class="visually-hidden">Şehir: </span><span class="city-name" data-city-name>İstanbul</span>
             <span class="city-change" aria-hidden="true">değiştir</span>
           </button>
+          <p class="sun-status" data-sun-status aria-live="polite"></p>
+        </div>
+        <div class="sky" data-sky>
+          <svg class="sky-svg" viewBox="0 0 300 86" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="sky-fill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="currentColor" stop-opacity="0.18"></stop>
+                <stop offset="1" stop-color="currentColor" stop-opacity="0"></stop>
+              </linearGradient>
+            </defs>
+            <path d="M18 62 Q150 -38 282 62 Z" fill="url(#sky-fill)"></path>
+            <path d="M18 62 Q150 -38 282 62" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6" stroke-dasharray="2,5" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+            <line x1="4" y1="62" x2="296" y2="62" stroke="var(--c-ink-muted)" stroke-opacity="0.35" vector-effect="non-scaling-stroke"></line>
+          </svg>
+          <span class="sun-ball" data-sun-dot hidden><span class="sun-halo"></span></span>
           <dl class="sun-times">
             <div><dt>Doğuş</dt><dd data-sunrise>--:--</dd></div>
             <div><dt>Batış</dt><dd data-sunset>--:--</dd></div>
           </dl>
         </div>
-        <svg class="sun-arc" viewBox="0 0 300 24" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M8 21 Q150 -10 292 21" fill="none" stroke="var(--c-line)" stroke-width="1.8" stroke-dasharray="3,4" vector-effect="non-scaling-stroke"></path>
-          <path data-arc-done fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke"></path>
-        </svg>
-        <span class="sun-dot" data-sun-dot hidden></span>
       </section>
 
       <p class="status" role="status" aria-live="polite" data-status></p>
@@ -113,20 +121,19 @@ import { NOTE_MAX_LENGTH } from '../lib/notes';
       <section class="note" aria-labelledby="note-label" data-note>
         <div class="note-head">
           <h2 id="note-label" class="caps note-label">Bu güne notun</h2>
-          <span class="note-badge">Yalnızca bu tarayıcıda</span>
+          <span class="note-links" data-note-links hidden>
+            <button type="button" class="link-btn" data-note-edit>Düzenle</button>
+            <span aria-hidden="true">·</span>
+            <button type="button" class="link-btn link-btn--danger" data-note-delete>Sil</button>
+          </span>
         </div>
         <div class="note-paper" data-note-view hidden>
           <p class="note-text" data-note-text></p>
-          <div class="note-actions">
-            <button type="button" class="btn btn--ghost" data-note-delete>Sil</button>
-            <button type="button" class="btn" data-note-edit>Düzenle</button>
-          </div>
         </div>
         <form class="note-paper" data-note-form>
           <label for="note-input" class="visually-hidden">Bu güne not</label>
           <textarea id="note-input" rows="3" maxlength={NOTE_MAX_LENGTH} placeholder="Bu güne kısa bir not yaz…" data-note-input></textarea>
           <div class="note-actions">
-            <p class="note-privacy">Notun sunucuya gönderilmez. <a href="/gizlilik">Ayrıntılar</a></p>
             <button type="button" class="btn btn--ghost" data-note-cancel hidden>Vazgeç</button>
             <button type="submit" class="btn btn--primary">Kaydet</button>
           </div>

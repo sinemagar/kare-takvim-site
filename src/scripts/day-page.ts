@@ -45,8 +45,10 @@ const els = {
   eventHead: $('[data-event-head]'),
   eventBody: $('[data-event-body]'),
   spot: $<HTMLImageElement>('[data-spot]'),
-  arcDone: $<SVGPathElement>('[data-arc-done]'),
+  sky: $('[data-sky]'),
   sunDot: $('[data-sun-dot]'),
+  sunStatus: $('[data-sun-status]'),
+  noteLinks: $('[data-note-links]'),
   quote: $('[data-quote]'),
   quoteText: $('[data-quote-text]'),
   quoteSource: $('[data-quote-source]'),
@@ -116,23 +118,37 @@ function renderSun() {
   els.cityName.textContent = currentCity.name;
   els.sunrise.textContent = t.sunrise ?? '—';
   els.sunset.textContent = t.sunset ?? '—';
-  // Güneşin yolu: yalnızca bugün için ve gündüz.
-  const prog = currentDate === todayISO() ? sunProgress(t) : null;
+  // Güneşin yolu: yalnızca bugün ve gündüz; konum CSS geçişiyle yumuşakça değişir.
+  const isToday = currentDate === todayISO();
+  const prog = isToday ? sunProgress(t) : null;
+  const toMin = (v: string | null) => (v ? Number(v.slice(0, 2)) * 60 + Number(v.slice(3, 5)) : null);
+  const rise = toMin(t.sunrise);
+  const set = toMin(t.sunset);
+  const dur = (m: number) => (m >= 60 ? `${Math.floor(m / 60)} sa ${m % 60} dk` : `${m} dk`);
+  let status = rise != null && set != null ? `Gün uzunluğu ${dur(set - rise)}` : '';
+  if (isToday && rise != null && set != null) {
+    const now = new Date();
+    const cur = (now.getUTCHours() * 60 + now.getUTCMinutes() + 180) % 1440; // Türkiye UTC+3
+    if (cur < rise) status = `Güneşin doğmasına ${dur(rise - cur)}`;
+    else if (cur <= set) status = `Güneşin batmasına ${dur(set - cur)}`;
+    else status = 'Güneş battı · iyi akşamlar';
+  }
+  els.sunStatus.textContent = status;
   els.sunDot.hidden = prog == null;
   if (prog == null) {
-    els.arcDone.removeAttribute('d');
+    els.sunDot.style.left = '0px';
+    els.sunDot.style.top = '62px';
     return;
   }
-  // Kuadratik Bézier: P0(8,21) P1(150,-10) P2(292,21), viewBox 300x24.
-  const q0 = { x: 8 + (150 - 8) * prog, y: 21 + (-10 - 21) * prog };
-  const q1 = { x: 150 + (292 - 150) * prog, y: -10 + (21 + 10) * prog };
-  const b = { x: q0.x + (q1.x - q0.x) * prog, y: q0.y + (q1.y - q0.y) * prog };
-  els.arcDone.setAttribute('d', `M8 21 Q${q0.x} ${q0.y} ${b.x} ${b.y}`);
-  // Nokta, SVG'nin piksel kutusuna göre konumlanır (SVG genişliği esner, yüksekliği sabit).
-  const svg = els.arcDone.ownerSVGElement!.getBoundingClientRect();
-  const box = els.sunDot.parentElement!.getBoundingClientRect();
-  els.sunDot.style.left = `${svg.left - box.left + (b.x / 300) * svg.width}px`;
-  els.sunDot.style.top = `${svg.top - box.top + (b.y / 24) * svg.height}px`;
+  // Kuadratik Bézier: P0(18,62) P1(150,-38) P2(282,62), viewBox 300x86 (yükseklik sabit 86px).
+  const u = 1 - prog;
+  const x = u * u * 18 + 2 * u * prog * 150 + prog * prog * 282;
+  const y = u * u * 62 + 2 * u * prog * -38 + prog * prog * 62;
+  const w = els.sky.clientWidth;
+  requestAnimationFrame(() => {
+    els.sunDot.style.left = `${(x / 300) * w}px`;
+    els.sunDot.style.top = `${y}px`;
+  });
 }
 
 function setStatus(message: string, kind: 'info' | 'error' = 'info', retry = false) {
@@ -263,7 +279,8 @@ function renderContent(day: DayContent) {
 
   const rest = special ? day.events.slice(1) : day.events;
   const [main, ...others] = rest;
-  els.event.hidden = special != null && !main;
+  // Yayımlanmış bilgi yoksa olay kartı hiç görünmez.
+  els.event.hidden = !main;
   if (!main) {
     els.eventLabel.textContent = eventLabel(undefined);
     els.spot.hidden = true;
@@ -321,6 +338,7 @@ function renderNote(editing = false) {
   const note = getNote(currentDate);
   const showView = Boolean(note) && !editing;
   els.noteView.hidden = !showView;
+  els.noteLinks.hidden = !showView;
   els.noteForm.hidden = showView;
   els.noteCancel.hidden = !note;
   if (note) els.noteText.textContent = note.body;
@@ -330,19 +348,19 @@ function renderNote(editing = false) {
 els.noteForm.addEventListener('submit', (ev) => {
   ev.preventDefault();
   const text = els.noteInput.value;
-  if (!text.trim()) {
-    setStatus('Boş not kaydedilmez.');
-    return;
-  }
+  if (!text.trim()) return;
   if (saveNote(currentDate, text)) {
     renderNote();
-    setStatus('Not bu tarayıcıda kaydedildi.');
     els.noteEdit.focus();
   } else {
     setStatus('Not kaydedilemedi: tarayıcı yerel depolamaya izin vermiyor.', 'error');
   }
 });
 els.noteEdit.addEventListener('click', () => {
+  renderNote(true);
+  els.noteInput.focus();
+});
+els.noteText.addEventListener('click', () => {
   renderNote(true);
   els.noteInput.focus();
 });
@@ -354,7 +372,6 @@ els.noteDelete.addEventListener('click', () => {
   if (!confirm('Bu günün notu silinsin mi?')) return;
   deleteNote(currentDate);
   renderNote();
-  setStatus('Not silindi.');
   els.noteInput.focus();
 });
 
@@ -448,10 +465,13 @@ els.cityList.addEventListener('click', (ev) => {
   renderSun();
   els.cityDialog.close();
   els.cityOpen.focus();
-  setStatus(`Şehir ${city.name} olarak ayarlandı.`);
 });
 
 window.addEventListener('resize', () => renderSun());
+// Güneş dakikada bir ilerler.
+setInterval(() => {
+  if (document.visibilityState === 'visible' && currentDate === todayISO()) renderSun();
+}, 30_000);
 
 // ---------- Başlat ----------
 readStateFromUrl();
