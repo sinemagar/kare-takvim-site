@@ -12,12 +12,9 @@
   width: 100%;
   max-width: 30rem;
   background-color: var(--c-leaf);
-  background-image: var(--leaf-image);
-  background-size: cover;
-  background-position: center bottom;
   border-radius: var(--radius);
   box-shadow: var(--shadow-leaf);
-  padding: var(--s-5) clamp(var(--s-4), 5vw, var(--s-6)) var(--s-5);
+  padding: var(--s-5) clamp(var(--s-4), 5vw, var(--s-6)) min(52vw, 15.6rem);
 }
 .perforation {
   position: absolute;
@@ -31,13 +28,14 @@
 
 .leaf-art {
   position: absolute;
+  left: 0;
   right: 0;
   bottom: 0;
-  width: min(70%, 26rem);
+  width: 100%;
   height: auto;
   z-index: -1;
-  opacity: 0.9;
   pointer-events: none;
+  user-select: none;
 }
 
 /* --- Üst şerit: gezinme yaprağın parçası --- */
@@ -432,6 +430,13 @@
   .leaf {
     max-width: 60rem;
     padding: var(--s-5) var(--s-7) var(--s-6);
+  }
+  /* Geniş yaprakta görsel sağ alt köşede durur; sol kenarı saydamlaşır. */
+  .leaf-art {
+    left: auto;
+    width: min(46%, 30rem);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 45%);
+    mask-image: linear-gradient(to right, transparent, #000 45%);
   }
   .leaf-body {
     display: grid;

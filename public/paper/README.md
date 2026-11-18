@@ -1,3 +1,1 @@
-Gerçek yaprak zemin görselleri buraya: `leaf-portrait.png`, `leaf-landscape.png`.
-Ardından `src/styles/tokens.css` içinde `--leaf-image: url('/paper/leaf-portrait.png');` yap.
-Brief: karetakvim-kaynak-dokuman/gorsel-uretim-briefi.md
+`leaf-art.webp`: yaprağın alt görseli (1080×1051, üst kenarı saydam). Kaynak ve işleme kaydı: karetakvim-kaynak-dokuman/gorseller/uretim-kaydi.md

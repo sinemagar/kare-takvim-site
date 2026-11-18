@@ -29,6 +29,4 @@
   --shadow-leaf: 0 1px 0 rgba(42, 37, 33, 0.04), 0 12px 32px -12px rgba(42, 37, 33, 0.22);
   --tap: 44px;
 
-  /* Gerçek görsel geldiğinde: --leaf-image: url('/paper/leaf-portrait.png'); */
-  --leaf-image: none;
 }

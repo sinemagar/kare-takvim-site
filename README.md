@@ -60,6 +60,6 @@ Statik Astro sitesi adaptör olmadan dağıtılır. Vercel'de projeyi bu repoya 
 
 ## Bilinen kısıtlar
 
-- Görsel zemin şimdilik CSS/SVG yer tutucusu. Gerçek görsel `public/paper/` altına konup `src/styles/tokens.css` içindeki `--leaf-image` ile bağlanır. Brief: `karetakvim-kaynak-dokuman/gorsel-uretim-briefi.md`.
+- Yaprağın alt görseli `public/paper/leaf-art.webp` (ChatGPT ile üretildi). Tanıtım ve sosyal paylaşım görselleri henüz yok.
 - Tarih sayfaları istemci tarafında üretilir; her gün için ayrı SEO sayfası yoktur (PRD'ye uygun).
 - Alan adı alınmadı; kanonik adres `PUBLIC_SITE_URL` girilene kadar eklenmez.
