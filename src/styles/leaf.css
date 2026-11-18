@@ -1,151 +1,347 @@
-/* Günlük yaprak. Dar ekranda dikey, geniş ekranda yatay kompozisyon. */
+/* Günlük yaprak — Stitch tasarımı (tasarim/stitch). Tek sütun; mobil uygulamayla aynı kompozisyon. */
 .stage {
-  padding: clamp(var(--s-3), 4vw, var(--s-7)) var(--s-3) 0;
+  padding: var(--s-4) var(--s-4) 0;
   display: flex;
   justify-content: center;
+}
+
+/* Takvim bloğu: alttaki iki sayfa kenarı */
+.pad {
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  padding-bottom: 12px;
+}
+.pad-sheet {
+  position: absolute;
+  top: 12px;
+  bottom: 0;
+  border-radius: var(--radius-leaf);
+}
+.pad-sheet--far {
+  left: 12px;
+  right: 12px;
+  background: var(--c-stack-edge);
+  transform: translateY(0);
+}
+.pad-sheet--near {
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  background: var(--c-paper-deep);
 }
 
 .leaf {
   position: relative;
-  isolation: isolate;
   overflow: hidden;
-  width: 100%;
-  max-width: 30rem;
-  background-color: var(--c-leaf);
-  border-radius: var(--radius);
+  background: var(--c-leaf);
+  border: 1px solid #ebe3d5;
+  border-radius: var(--radius-leaf);
   box-shadow: var(--shadow-leaf);
-  padding: var(--s-5) clamp(var(--s-4), 5vw, var(--s-6)) min(52vw, 15.6rem);
-}
-.perforation {
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 10px;
-  background-image: radial-gradient(circle, var(--c-bg) 2.5px, transparent 3px);
-  background-size: 14px 10px;
-  background-position: 7px 2px;
-  border-bottom: 1px dashed var(--c-line);
 }
 
-.leaf-art {
+/* --- Bant --- */
+.band {
+  position: relative;
+  background: var(--theme);
+  color: #fff;
+  padding: 26px var(--s-3) var(--s-3);
+}
+.hole {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: auto;
-  z-index: -1;
-  pointer-events: none;
-  user-select: none;
-}
-
-/* --- Üst şerit: gezinme yaprağın parçası --- */
-.leaf-head {
-  margin-top: var(--s-2);
-}
-.leaf-nav {
+  top: 10px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.28);
   display: grid;
-  grid-template-columns: var(--tap) 1fr var(--tap);
-  align-items: center;
-  gap: var(--s-2);
+  place-items: center;
 }
-.leaf-title {
-  text-align: center;
+.hole::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--c-hole);
 }
-.leaf-title h1 {
-  font-size: 1.15rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+.hole--l {
+  left: calc(25% - 8px);
 }
-.weekday {
-  color: var(--c-ink-muted);
-  font-size: 0.95rem;
+.hole--r {
+  right: calc(25% - 8px);
 }
-.leaf-tools {
+.band-nav {
   display: flex;
-  justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  gap: var(--s-2);
-  margin-top: var(--s-2);
-  padding-bottom: var(--s-3);
-  border-bottom: 1px solid var(--c-line);
 }
-.date-field {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s-2);
-  min-height: var(--tap);
-  padding: 0 var(--s-3);
-  border: 1px solid var(--c-line);
-  border-radius: 999px;
-  color: var(--c-ink-muted);
-  background: rgba(255, 255, 255, 0.4);
-}
-.date-field:focus-within {
-  outline: 3px solid var(--c-focus);
-  outline-offset: 2px;
-}
-.date-field input {
+.band-btn {
+  width: var(--tap);
+  height: var(--tap);
+  display: grid;
+  place-items: center;
   border: 0;
+  border-radius: 50%;
   background: transparent;
-  color: var(--c-ink);
-  font: inherit;
-  font-size: 0.95rem;
-  min-height: 40px;
+  color: #fff;
+  cursor: pointer;
 }
-.date-field input:focus {
-  outline: none;
+.band-btn:hover {
+  background: rgba(0, 0, 0, 0.12);
 }
-.today-btn {
-  color: var(--c-accent);
-  font-weight: 600;
+.band :focus-visible {
+  outline-color: #fff;
+}
+.band-title {
+  flex: 1;
+  text-align: center;
+  padding-left: var(--tap);
+}
+.band-month {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+.band-weekday {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+.band-date {
+  position: relative;
+}
+.band-date-input {
+  position: absolute;
+  inset: auto 0 0 auto;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.band-body:empty {
+  display: none;
+}
+.band-body {
+  padding: 0 var(--s-2) var(--s-2);
 }
 
-/* --- Gün numarası --- */
-.leaf-date {
+/* Noktalı koparma çizgisi */
+.perf {
+  height: 3px;
+  margin: 3px var(--s-4) 0;
+  background-image: radial-gradient(circle, var(--perf, var(--c-line)) 1.5px, transparent 1.8px);
+  background-size: 8px 3px;
+}
+.leaf[data-band] .band + .perf {
+  --perf: var(--theme);
+}
+.perf--soft {
+  margin: 0;
+}
+
+/* --- Gövde --- */
+.leaf-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  padding: var(--s-4) 20px var(--s-4);
+}
+
+.hero {
   text-align: center;
 }
 .day-number {
   font-family: var(--font-serif);
-  font-weight: 700;
-  font-size: clamp(6rem, 32vw, 9.5rem);
+  font-weight: 900;
+  font-size: clamp(8rem, 40vw, 11rem);
   line-height: 1;
-  color: var(--c-accent);
-  letter-spacing: -0.03em;
-  margin: var(--s-4) 0 var(--s-3);
-  font-variant-numeric: lining-nums;
+  letter-spacing: -0.04em;
+  color: var(--theme);
+  font-variation-settings: 'opsz' 144;
+}
+.hero-line {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--s-2);
+  margin-top: var(--s-1);
+}
+.hero-month {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+.hero-dot {
+  color: var(--c-line);
+}
+.hero-weekday {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--c-ink-muted);
+}
+.hero-rule {
+  border-top: 1px solid var(--c-line);
+  margin-top: var(--s-2);
+  padding-top: var(--s-2);
+  color: var(--c-ink-muted);
+}
+/* Bandın içindeki kahraman ve özel gün başlığı beyaz */
+.band .day-number {
+  color: #fff;
+}
+.band .hero-month,
+.band .hero-weekday {
+  color: rgba(255, 255, 255, 0.92);
+}
+.band .hero-dot {
+  color: rgba(255, 255, 255, 0.6);
+}
+.band .hero-rule {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.85);
 }
 
-/* --- Önemli olay (birincil) --- */
-.event {
-  background: rgba(231, 213, 194, 0.45);
+.today-btn {
+  align-self: center;
+}
+
+.card {
+  background: var(--c-bg);
   border: 1px solid var(--c-line);
   border-radius: var(--radius);
   padding: var(--s-4);
 }
-.eyebrow {
-  font-size: 0.75rem;
+
+/* Özel gün başlığı */
+.special {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+}
+.leaf-body .special {
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+  padding: var(--s-4);
+}
+.band .special {
+  padding-top: var(--s-4);
+}
+.pill {
+  border: 1px solid var(--theme);
+  color: var(--theme);
+  border-radius: 999px;
+  padding: 3px var(--s-3);
+}
+.band .pill {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+.special-title {
+  font-size: 1.75rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--c-accent);
-  margin-bottom: var(--s-1);
 }
-.event-title {
-  font-size: clamp(1.35rem, 5vw, 1.6rem);
-  font-weight: 700;
-  color: var(--c-ink);
-}
-.event-summary {
-  margin-top: var(--s-2);
-  color: var(--c-ink);
-}
-.event-source {
-  margin-top: var(--s-2);
-  font-size: 0.85rem;
+.special-summary {
   color: var(--c-ink-muted);
 }
+.band .special-summary {
+  color: rgba(255, 255, 255, 0.92);
+}
+.band .special a {
+  color: #fff;
+}
+.memorial {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.25rem;
+}
+.memorial::before,
+.memorial::after {
+  content: '';
+  width: 2.75rem;
+  height: 1px;
+  background: var(--c-line);
+}
+
+.page-art {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--c-line);
+}
+
+/* Olay kartı */
+.event-row {
+  display: flex;
+  gap: var(--s-3);
+  align-items: flex-start;
+}
+.event-main {
+  flex: 1;
+  min-width: 0;
+}
+.eyebrow {
+  color: var(--theme);
+}
+.leaf[data-theme='anma'] .eyebrow {
+  color: var(--c-ink);
+}
+.event-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-top: var(--s-1);
+}
+.spot {
+  width: 88px;
+  height: 88px;
+  flex: none;
+  border-radius: var(--radius);
+  border: 1px solid var(--c-line);
+  background: var(--c-paper-deep);
+}
+.event-summary {
+  font-size: 0.95rem;
+  margin-top: var(--s-2);
+}
+.event-source {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-top: var(--s-2);
+  color: var(--c-ink-muted);
+}
+.event-source a {
+  color: var(--c-night);
+}
+.band .event-source {
+  color: rgba(255, 255, 255, 0.85);
+}
 .event-empty {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-1);
+}
+.event-empty img {
+  width: 100%;
+  max-height: 10rem;
+  object-fit: contain;
+}
+.event-empty h2 {
+  font-size: 1.25rem;
+}
+.event-empty p {
+  font-size: 0.875rem;
   color: var(--c-ink-muted);
 }
 .more-events {
@@ -155,226 +351,303 @@
 }
 .more-events summary {
   cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--c-night);
   min-height: var(--tap);
   display: flex;
   align-items: center;
-  color: var(--c-accent);
-  font-weight: 600;
 }
 .more-events ul {
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
-  gap: var(--s-3);
+  gap: var(--s-4);
 }
 .more-events h3 {
-  font-size: 1.05rem;
+  font-size: 1.1rem;
+}
+.skeleton {
+  height: 0.9rem;
+  border-radius: 6px;
+  background: var(--c-paper-deep);
+  margin-top: var(--s-2);
+}
+.skeleton--title {
+  height: 1.5rem;
+  width: 80%;
+}
+.skeleton--short {
+  width: 60%;
 }
 
-/* --- Söz (ikincil) --- */
+/* Söz */
 .quote {
-  margin: var(--s-5) 0 0;
-  text-align: center;
+  margin: 0;
+  display: flex;
+  gap: var(--s-3);
+  padding: 0 var(--s-2);
 }
-.quote-label {
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.quote-mark {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 3.5rem;
+  line-height: 0.8;
+  color: var(--c-saffron);
+}
+.leaf[data-theme='anma'] .quote-mark {
   color: var(--c-ink-muted);
 }
 .quote blockquote {
-  margin: var(--s-1) 0 0;
+  margin: 0;
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 1.05rem;
-  color: var(--c-ink);
-}
-.quote blockquote p::before {
-  content: '“';
-}
-.quote blockquote p::after {
-  content: '”';
+  font-size: 1.0625rem;
+  line-height: 1.4;
 }
 .quote-source {
-  font-size: 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
   color: var(--c-ink-muted);
-  margin-top: var(--s-1);
+  margin-top: var(--s-2);
 }
 
-/* --- Güneş --- */
+.rule {
+  border: 0;
+  border-top: 1px solid var(--c-line);
+  margin: 0;
+}
+
+/* Güneş şeridi */
 .sun {
-  margin-top: var(--s-5);
+  position: relative;
+  padding: var(--s-1) var(--s-3) var(--s-2);
+  border-radius: var(--radius-sm);
+  color: var(--c-saffron);
+}
+.leaf[data-theme='anma'] .sun {
+  color: var(--c-ink-muted);
+}
+.sun-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: var(--s-2) var(--s-5);
-  padding-top: var(--s-3);
-  border-top: 1px solid var(--c-line);
+  justify-content: space-between;
+  column-gap: var(--s-3);
 }
 .city-btn {
   display: inline-flex;
-  align-items: baseline;
-  gap: var(--s-2);
+  align-items: center;
+  gap: 6px;
   min-height: var(--tap);
-  padding: 0 var(--s-2);
   border: 0;
   background: none;
+  padding: 0;
   font: inherit;
-  font-weight: 600;
-  color: var(--c-ink);
   cursor: pointer;
-  border-radius: var(--radius-sm);
+  color: var(--c-ink);
 }
-.city-btn:hover .city-change {
-  text-decoration: underline;
+.sun-icon {
+  color: inherit;
+}
+.city-btn .sun-icon {
+  color: var(--c-saffron);
+}
+.leaf[data-theme='anma'] .city-btn .sun-icon {
+  color: var(--c-ink-muted);
+}
+.city-name {
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 .city-change {
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: var(--c-accent);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--c-night);
+  text-decoration: underline;
 }
 .sun-times {
   display: flex;
-  gap: var(--s-5);
+  gap: var(--s-3);
   margin: 0;
+  color: var(--c-ink);
 }
 .sun-times div {
   display: flex;
-  gap: var(--s-2);
+  gap: 4px;
   align-items: baseline;
 }
 .sun-times dt {
+  font-size: 0.75rem;
   color: var(--c-ink-muted);
-  font-size: 0.9rem;
 }
 .sun-times dd {
   margin: 0;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
-
-.status {
-  margin-top: var(--s-3);
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--c-ink-muted);
+.sun-arc {
+  display: block;
+  width: 100%;
+  height: 22px;
 }
+.sun-dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 2px var(--c-bg);
+}
+
 .status:empty {
   display: none;
+}
+.status {
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--c-ink-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
 }
 .status[data-kind='error'] {
   color: var(--c-danger);
 }
-.status .btn {
-  margin-left: var(--s-2);
-}
 
-/* --- Not --- */
+/* Not */
 .note {
-  margin-top: var(--s-5);
-  padding-top: var(--s-4);
-  border-top: 1px dashed var(--c-line);
-}
-.note-label {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: var(--s-2);
-}
-.note textarea {
-  width: 100%;
-  min-height: 5.5rem;
-  resize: vertical;
-  padding: var(--s-3);
-  border: 1px solid var(--c-line);
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.65);
-  color: var(--c-ink);
-  font: inherit;
-}
-.note-text {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  padding: var(--s-3);
-  background: rgba(255, 255, 255, 0.55);
-  border-left: 3px solid var(--c-accent);
-  border-radius: var(--radius-sm);
-}
-.note-actions {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-2);
-  margin-top: var(--s-2);
+  flex-direction: column;
+  gap: var(--s-3);
+  margin-top: calc(-1 * var(--s-2));
 }
-.note-privacy {
-  margin-top: var(--s-3);
-  font-size: 0.8rem;
-  color: var(--c-ink-muted);
-}
-
-/* --- Alt imza --- */
-.leaf-foot {
+.note-head {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--s-2);
   justify-content: space-between;
   align-items: center;
-  margin-top: var(--s-5);
-  font-size: 0.8rem;
+}
+.note-label {
   color: var(--c-ink-muted);
 }
-.brand {
-  font-family: var(--font-serif);
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-.demo-badge {
-  background: var(--c-leaf);
-  border: 1px solid var(--c-accent);
-  color: var(--c-accent);
+.note-badge {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--c-sage-ink);
+  background: rgba(143, 165, 138, 0.16);
   border-radius: 999px;
   padding: 2px var(--s-2);
 }
-
-/* --- İskelet --- */
-.skeleton {
-  height: 0.9rem;
-  border-radius: 6px;
-  background: linear-gradient(90deg, rgba(42, 37, 33, 0.06), rgba(42, 37, 33, 0.12), rgba(42, 37, 33, 0.06));
-  background-size: 200% 100%;
-  animation: shimmer 1.4s infinite linear;
+.note-paper {
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-sm);
+  background: var(--c-bg);
+  padding: var(--s-3);
+}
+.note textarea {
+  width: 100%;
+  min-height: 5.25rem;
+  border: 0;
+  resize: vertical;
+  background: repeating-linear-gradient(to bottom, transparent 0 27px, var(--c-line) 27px 28px);
+  font: inherit;
+  font-size: 0.9375rem;
+  line-height: 28px;
+  color: var(--c-ink);
+  padding: 0;
+}
+.note textarea:focus-visible {
+  outline-offset: 6px;
+}
+.note-text {
+  white-space: pre-wrap;
+  line-height: 28px;
+  min-height: 3.5rem;
+}
+.note-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s-2);
   margin-top: var(--s-2);
+  padding-top: var(--s-2);
+  border-top: 1px solid var(--c-line);
 }
-.skeleton--title {
-  height: 1.4rem;
-  width: 70%;
-}
-@keyframes shimmer {
-  to {
-    background-position: -200% 0;
-  }
+.note-privacy {
+  flex: 1;
+  font-size: 0.6875rem;
+  color: var(--c-ink-muted);
 }
 
-/* --- Şehir diyaloğu --- */
+.demo-badge {
+  align-self: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--c-accent-dark);
+  border: 1px solid var(--c-accent);
+  border-radius: 999px;
+  padding: 2px var(--s-3);
+}
+
+.leaf-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--c-line);
+  padding-top: var(--s-2);
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+.brand img {
+  border-radius: 6px;
+}
+.foot-link {
+  font-size: 0.8125rem;
+  color: var(--c-ink-muted);
+  min-height: var(--tap);
+  display: inline-flex;
+  align-items: center;
+}
+
+/* --- Özel gün temaları (mobil src/lib/theme.ts ile aynı renkler) --- */
+.leaf[data-theme='milli'] {
+  --theme: #c8372d;
+}
+.leaf[data-theme='dini'] {
+  --theme: #8a6416;
+}
+.leaf[data-theme='anma'] {
+  --theme: #1f1b18;
+}
+
+/* --- Şehir penceresi --- */
 .city-dialog {
   border: 0;
-  border-radius: var(--radius);
+  border-radius: var(--radius-leaf);
   padding: 0;
   width: min(28rem, calc(100vw - 2rem));
-  max-height: min(36rem, calc(100vh - 2rem));
-  background: var(--c-leaf);
+  max-height: min(38rem, calc(100vh - 2rem));
+  background: var(--c-bg);
   color: var(--c-ink);
   box-shadow: var(--shadow-leaf);
 }
 .city-dialog::backdrop {
-  background: rgba(42, 37, 33, 0.35);
+  background: rgba(31, 27, 24, 0.4);
 }
 .city-dialog-inner {
   display: flex;
   flex-direction: column;
-  gap: var(--s-2);
-  padding: var(--s-4);
+  gap: var(--s-3);
+  padding: var(--s-5) var(--s-4) var(--s-4);
   max-height: inherit;
 }
 .city-dialog-head {
@@ -383,19 +656,19 @@
   align-items: center;
 }
 .city-dialog-head h2 {
-  font-size: 1.2rem;
+  font-size: 1.6rem;
 }
 .city-hint {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--c-ink-muted);
 }
 .city-dialog input[type='search'] {
-  min-height: var(--tap);
-  padding: 0 var(--s-3);
+  min-height: 48px;
+  padding: 0 var(--s-4);
   border: 1px solid var(--c-line);
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
   font: inherit;
-  background: #fff;
+  background: var(--c-leaf);
   color: var(--c-ink);
 }
 .city-list {
@@ -404,92 +677,64 @@
   padding: 0;
   overflow-y: auto;
   min-height: 8rem;
+  background: var(--c-leaf);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius);
+}
+.city-list li + li button {
+  border-top: 1px solid var(--c-line);
 }
 .city-list button {
   width: 100%;
-  min-height: var(--tap);
+  min-height: 50px;
   text-align: left;
-  padding: 0 var(--s-3);
+  padding: 0 var(--s-4);
   border: 0;
-  border-bottom: 1px solid var(--c-line);
   background: none;
   font: inherit;
   color: var(--c-ink);
   cursor: pointer;
 }
-.city-list button:hover,
-.city-list button[aria-current='true'] {
-  background: rgba(231, 213, 194, 0.6);
+.city-list button:hover {
+  background: var(--c-paper-deep);
 }
 .city-list button[aria-current='true'] {
   font-weight: 700;
+  color: var(--c-accent);
+}
+.city-list button[aria-current='true']::after {
+  content: ' ✓';
 }
 
-/* --- Yatay kompozisyon --- */
-@media (min-width: 760px) and (min-aspect-ratio: 1/1) {
-  .leaf {
-    max-width: 60rem;
-    padding: var(--s-5) var(--s-7) var(--s-6);
-  }
-  /* Geniş yaprakta görsel sağ alt köşede durur; sol kenarı saydamlaşır. */
-  .leaf-art {
-    left: auto;
-    width: min(46%, 30rem);
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 45%);
-    mask-image: linear-gradient(to right, transparent, #000 45%);
-  }
-  .leaf-body {
-    display: grid;
-    grid-template-columns: minmax(13rem, 1fr) 2fr;
-    gap: var(--s-6);
-    align-items: start;
-    margin-top: var(--s-4);
-  }
-  .leaf-date {
-    border-right: 1px solid var(--c-line);
-    padding-right: var(--s-5);
-    min-height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .day-number {
-    font-size: clamp(8rem, 14vw, 11rem);
-    margin: 0;
-  }
-  .quote {
-    text-align: left;
-  }
-  .sun {
-    justify-content: flex-start;
-  }
-  .note {
-    max-width: 38rem;
-  }
+/* --- Tanıtım şeridi --- */
+.intro {
+  max-width: 60rem;
+  margin: var(--s-7) auto 0;
+  padding: 0 var(--s-4);
+  display: grid;
+  gap: var(--s-5);
+  align-items: center;
 }
-
-/* --- Özel gün temaları (mobil src/lib/theme.ts ile aynı renkler) --- */
-.leaf[data-theme='milli'] {
-  --c-accent: #b01e28;
+.intro img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-leaf);
 }
-.leaf[data-theme='dini'] {
-  --c-accent: #7a5a1e;
+.intro h2 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
-/* Anma günü: sade, renksiz, süs görseli yok. */
-.leaf[data-theme='anma'] {
-  --c-accent: #2a2521;
-  padding-bottom: var(--s-5);
+.intro p {
+  color: var(--c-ink-muted);
+  margin-top: var(--s-3);
 }
-.leaf[data-theme='anma'] .leaf-art {
-  display: none;
+.intro .caps {
+  color: var(--c-accent);
+  margin-bottom: var(--s-2);
 }
-.leaf[data-theme='anma'] .event {
-  background: transparent;
-}
-.leaf[data-tier='ozel'] .event {
-  border-color: var(--c-accent);
-  border-width: 1.5px;
-}
-.leaf[data-tier='ozel'] .event-title {
-  font-size: clamp(1.5rem, 5.6vw, 1.85rem);
+@media (min-width: 800px) {
+  .intro {
+    grid-template-columns: 1fr 1.2fr;
+  }
 }

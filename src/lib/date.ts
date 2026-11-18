@@ -65,3 +65,16 @@ export function dateParts(date: ISODate): DateParts {
     short: shortFmt.format(d),
   };
 }
+
+/** Yılın kaçıncı günü ve ISO 8601 hafta numarası. */
+export function yearProgress(date: ISODate): { dayOfYear: number; week: number } {
+  const d = noonUTC(date);
+  const start = Date.UTC(d.getUTCFullYear(), 0, 1, 12);
+  const dayOfYear = Math.round((d.getTime() - start) / 86_400_000) + 1;
+  // ISO hafta: haftanın perşembesinin yılına göre.
+  const th = new Date(d);
+  th.setUTCDate(th.getUTCDate() + 4 - (th.getUTCDay() || 7));
+  const yearStart = Date.UTC(th.getUTCFullYear(), 0, 1, 12);
+  const week = Math.ceil(((th.getTime() - yearStart) / 86_400_000 + 1) / 7);
+  return { dayOfYear, week };
+}

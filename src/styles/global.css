@@ -14,10 +14,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(120% 60% at 100% 100%, rgba(216, 160, 138, 0.18), transparent 60%),
-    radial-gradient(90% 50% at 0% 0%, rgba(184, 181, 159, 0.16), transparent 60%),
-    var(--c-bg);
+  background: var(--c-bg);
   color: var(--c-ink);
   font-family: var(--font-sans);
   font-size: 1rem;
@@ -37,7 +34,7 @@ p {
 }
 
 a {
-  color: var(--c-accent);
+  color: var(--c-night);
   text-underline-offset: 0.18em;
 }
 
@@ -90,7 +87,8 @@ a {
   background: var(--c-leaf);
   color: var(--c-ink);
   font: inherit;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none;
 }
@@ -98,16 +96,18 @@ a {
   border-color: var(--c-ink-muted);
 }
 .btn--primary {
-  background: var(--c-accent);
-  border-color: var(--c-accent);
+  background: var(--theme, var(--c-accent));
+  border-color: var(--theme, var(--c-accent));
   color: var(--c-accent-ink);
+  padding: 0 var(--s-5);
 }
 .btn--primary:hover {
-  background: #6a262c;
+  filter: brightness(0.88);
 }
 .btn--ghost {
   background: transparent;
   border-color: transparent;
+  color: var(--c-night);
 }
 .btn--ghost:hover {
   background: rgba(42, 37, 33, 0.06);
@@ -148,7 +148,9 @@ a {
 }
 .prose-card {
   background: var(--c-leaf);
-  border-radius: var(--radius);
+  border: 1px solid var(--c-line);
+  border-top: 12px solid var(--c-accent);
+  border-radius: var(--radius-leaf);
   box-shadow: var(--shadow-leaf);
   padding: var(--s-6) clamp(var(--s-4), 5vw, var(--s-7));
 }
@@ -177,4 +179,12 @@ a {
     animation: none !important;
     transition: none !important;
   }
+}
+
+.caps {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }

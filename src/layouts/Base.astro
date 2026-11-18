@@ -1,5 +1,7 @@
 ---
-import '@fontsource-variable/lora/index.css';
+import '@fontsource-variable/fraunces/index.css';
+import '@fontsource-variable/fraunces/wght-italic.css';
+import '@fontsource-variable/inter/index.css';
 import '../styles/global.css';
 
 interface Props {
@@ -28,13 +30,17 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#F2EBE1" />
+    <meta name="theme-color" content="#FAF6EF" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     {canonical && <link rel="canonical" href={canonical} />}
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:locale" content="tr_TR" />
+    <meta property="og:image" content={Astro.site ? new URL('/og.jpg', Astro.site).toString() : '/og.jpg'} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   </head>

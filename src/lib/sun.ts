@@ -23,3 +23,15 @@ export function sunTimes(date: ISODate, city: Pick<City, 'lat' | 'lng'>): SunTim
   const t = getTimes(noonUTC(date), city.lat, city.lng, 0, TURKEY_UTC_OFFSET_MINUTES);
   return { sunrise: format(t.sunrise), sunset: format(t.sunset) };
 }
+
+const toMinutes = (hhmm: string) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5));
+
+/** Güneşin gün içindeki konumu (0 = doğuş, 1 = batış). Gece ya da saat yoksa null. */
+export function sunProgress(times: SunTimes, now: Date = new Date()): number | null {
+  if (!times.sunrise || !times.sunset) return null;
+  const rise = toMinutes(times.sunrise);
+  const set = toMinutes(times.sunset);
+  const cur = toMinutes(timeFmt.format(now));
+  if (set <= rise || cur < rise || cur > set) return null;
+  return (cur - rise) / (set - rise);
+}

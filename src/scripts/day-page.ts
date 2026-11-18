@@ -2,10 +2,11 @@
 // Tüm dinamik metin textContent ile yazılır (HTML enjeksiyonu yok).
 import { CITIES, DEFAULT_CITY_ID, findCity, searchCities } from '../lib/cities';
 import { loadCities, loadDay } from '../lib/content';
-import { addDays, dateParts, isValidISODate, todayISO } from '../lib/date';
+import { categoryKey, pageArtKey } from '../lib/art';
+import { addDays, dateParts, isValidISODate, todayISO, yearProgress } from '../lib/date';
 import { deleteNote, getNote, saveNote } from '../lib/notes';
 import { read, write } from '../lib/storage';
-import { sunTimes } from '../lib/sun';
+import { sunProgress, sunTimes } from '../lib/sun';
 import { eventLabel, hasDemo } from '../lib/supabase-query';
 import type { City, DayContent, DayEvent, ISODate } from '../lib/types';
 
@@ -25,8 +26,27 @@ const els = {
   next: $<HTMLButtonElement>('[data-next]'),
   today: $<HTMLButtonElement>('[data-today]'),
   dateInput: $<HTMLInputElement>('[data-date-input]'),
+  dateOpen: $<HTMLButtonElement>('[data-date-open]'),
+  bandBody: $('[data-band-body]'),
+  leafBody: $('[data-leaf-body]'),
+  hero: $('[data-hero]'),
+  heroMonth: $('[data-hero-month]'),
+  heroWeekday: $('[data-hero-weekday]'),
+  progress: $('[data-progress]'),
+  special: $('[data-special]'),
+  specialLabel: $('[data-special-label]'),
+  specialTitle: $('[data-special-title]'),
+  specialSummary: $('[data-special-summary]'),
+  specialSources: $('[data-special-sources]'),
+  memorial: $('[data-memorial]'),
+  pageArt: $<HTMLImageElement>('[data-page-art]'),
+  event: $('[data-event]'),
   eventLabel: $('#event-label'),
+  eventHead: $('[data-event-head]'),
   eventBody: $('[data-event-body]'),
+  spot: $<HTMLImageElement>('[data-spot]'),
+  arcDone: $<SVGPathElement>('[data-arc-done]'),
+  sunDot: $('[data-sun-dot]'),
   quote: $('[data-quote]'),
   quoteText: $('[data-quote-text]'),
   quoteSource: $('[data-quote-source]'),
@@ -79,9 +99,13 @@ function renderDate() {
   const p = dateParts(currentDate);
   const isToday = currentDate === todayISO();
   els.long.textContent = `${p.long}${isToday ? ', bugün' : ''}`;
-  els.monthYear.textContent = p.monthYear;
+  const y = yearProgress(currentDate);
+  els.monthYear.textContent = p.monthYear.toLocaleUpperCase('tr-TR');
   els.weekday.textContent = p.weekday;
   els.dayNumber.textContent = p.dayNumber;
+  els.heroMonth.textContent = p.monthYear.toLocaleUpperCase('tr-TR');
+  els.heroWeekday.textContent = p.weekday;
+  els.progress.textContent = `${y.dayOfYear}. GÜN · ${y.week}. HAFTA`;
   els.dateInput.value = currentDate;
   els.today.hidden = isToday;
   document.title = `${p.long} · KareTakvim`;
@@ -92,6 +116,23 @@ function renderSun() {
   els.cityName.textContent = currentCity.name;
   els.sunrise.textContent = t.sunrise ?? '—';
   els.sunset.textContent = t.sunset ?? '—';
+  // Güneşin yolu: yalnızca bugün için ve gündüz.
+  const prog = currentDate === todayISO() ? sunProgress(t) : null;
+  els.sunDot.hidden = prog == null;
+  if (prog == null) {
+    els.arcDone.removeAttribute('d');
+    return;
+  }
+  // Kuadratik Bézier: P0(8,21) P1(150,-10) P2(292,21), viewBox 300x24.
+  const q0 = { x: 8 + (150 - 8) * prog, y: 21 + (-10 - 21) * prog };
+  const q1 = { x: 150 + (292 - 150) * prog, y: -10 + (21 + 10) * prog };
+  const b = { x: q0.x + (q1.x - q0.x) * prog, y: q0.y + (q1.y - q0.y) * prog };
+  els.arcDone.setAttribute('d', `M8 21 Q${q0.x} ${q0.y} ${b.x} ${b.y}`);
+  // Nokta, SVG'nin piksel kutusuna göre konumlanır (SVG genişliği esner, yüksekliği sabit).
+  const svg = els.arcDone.ownerSVGElement!.getBoundingClientRect();
+  const box = els.sunDot.parentElement!.getBoundingClientRect();
+  els.sunDot.style.left = `${svg.left - box.left + (b.x / 300) * svg.width}px`;
+  els.sunDot.style.top = `${svg.top - box.top + (b.y / 24) * svg.height}px`;
 }
 
 function setStatus(message: string, kind: 'info' | 'error' = 'info', retry = false) {
@@ -142,38 +183,99 @@ function sourceLine(e: DayEvent) {
   return p;
 }
 
+/** Gün rakamını ve özel gün başlığını banda ya da gövdeye yerleştirir. */
+function placeHero(inBand: boolean) {
+  if (inBand) {
+    leaf.dataset.band = '';
+    els.bandBody.append(els.hero, els.special);
+  } else {
+    delete leaf.dataset.band;
+    els.leafBody.prepend(els.hero);
+    els.today.after(els.special);
+  }
+}
+
 function renderSkeleton() {
   leaf.setAttribute('aria-busy', 'true');
-  els.eventBody.replaceChildren(el('div', 'skeleton skeleton--title'), el('div', 'skeleton'));
+  placeHero(false);
+  els.special.hidden = true;
+  els.pageArt.hidden = true;
+  els.event.hidden = false;
+  els.spot.hidden = true;
+  els.eventHead.replaceChildren(el('div', 'skeleton skeleton--title'));
+  els.eventBody.replaceChildren(el('div', 'skeleton'), el('div', 'skeleton skeleton--short'));
   els.quote.hidden = true;
   els.demoBadge.hidden = true;
-  els.eventLabel.textContent = '\u00a0';
+  els.eventLabel.textContent = ' ';
   delete leaf.dataset.theme;
   delete leaf.dataset.tier;
 }
 
+function emptyState(failed: boolean) {
+  const box = el('div', 'event-empty');
+  const img = el('img');
+  img.src = failed ? '/art/durum-cevrimdisi.webp' : '/art/durum-bos.webp';
+  img.alt = '';
+  img.width = 900;
+  img.height = 675;
+  box.append(
+    img,
+    el('h2', undefined, failed ? 'Yaprak şu an getirilemedi' : 'Bu yaprak henüz yazılmadı'),
+    el('p', undefined, failed ? 'Bağlantını kontrol edip yeniden dene. Notların yerinde duruyor.' : 'Bu gün için yayımlanmış bir bilgi yok.'),
+  );
+  return box;
+}
+
+function moreEvents(rest: DayEvent[]) {
+  const details = el('details', 'more-events');
+  details.append(el('summary', undefined, `${rest.length} bilgi daha`));
+  const ul = el('ul');
+  for (const e of rest) {
+    const li = el('li');
+    li.append(el('h3', undefined, e.title), el('p', 'event-summary', e.summary), sourceLine(e));
+    ul.append(li);
+  }
+  details.append(ul);
+  return details;
+}
+
 function renderContent(day: DayContent) {
   leaf.setAttribute('aria-busy', 'false');
-  const [first, ...rest] = day.events;
-  els.eventLabel.textContent = eventLabel(first);
   if (day.theme) leaf.dataset.theme = day.theme;
-  if (first?.tier === 'ozel') leaf.dataset.tier = 'ozel';
-  if (!first) {
-    els.eventBody.replaceChildren(el('p', 'event-empty', 'Bu gün için yayımlanmış bir bilgi yok.'));
+  const [first] = day.events;
+  const special = first?.tier === 'ozel' ? first : null;
+  if (special) leaf.dataset.tier = 'ozel';
+  // Millî ve dinî günlerde bant aşağı uzar; anma gününde sade kalır.
+  placeHero(special != null && day.theme !== 'anma');
+
+  els.special.hidden = !special;
+  if (special) {
+    els.specialLabel.textContent = eventLabel(special);
+    els.specialTitle.textContent = special.title;
+    els.specialSummary.textContent = special.summary;
+    els.memorial.hidden = !(day.theme === 'anma' && currentDate.endsWith('-11-10'));
+    els.specialSources.replaceChildren(sourceLine(special));
+  }
+
+  const art = pageArtKey(day);
+  els.pageArt.hidden = !art;
+  if (art) els.pageArt.src = `/art/sayfa-${art}.webp`;
+
+  const rest = special ? day.events.slice(1) : day.events;
+  const [main, ...others] = rest;
+  els.event.hidden = special != null && !main;
+  if (!main) {
+    els.eventLabel.textContent = eventLabel(undefined);
+    els.spot.hidden = true;
+    els.eventHead.replaceChildren();
+    els.eventBody.replaceChildren(emptyState(false));
   } else {
-    const nodes: Node[] = [el('h2', 'event-title', first.title), el('p', 'event-summary', first.summary), sourceLine(first)];
-    if (rest.length) {
-      const details = el('details', 'more-events');
-      details.append(el('summary', undefined, `${rest.length} bilgi daha`));
-      const ul = el('ul');
-      for (const e of rest) {
-        const li = el('li');
-        li.append(el('h3', undefined, e.title), el('p', 'event-summary', e.summary), sourceLine(e));
-        ul.append(li);
-      }
-      details.append(ul);
-      nodes.push(details);
-    }
+    els.eventLabel.textContent = eventLabel(main);
+    els.spot.src = `/art/kategori-${categoryKey(main.category)}.webp`;
+    els.spot.hidden = false;
+    els.eventHead.replaceChildren(el('h2', 'event-title', main.title));
+    const nodes: Node[] = [el('p', 'event-summary', main.summary), sourceLine(main)];
+    if (others.length) nodes.push(moreEvents(others));
     els.eventBody.replaceChildren(...nodes);
   }
 
@@ -202,7 +304,8 @@ async function refreshContent() {
   } else {
     leaf.setAttribute('aria-busy', 'false');
     els.eventLabel.textContent = eventLabel(undefined);
-    els.eventBody.replaceChildren(el('p', 'event-empty', 'Bu günün içeriği şu an alınamadı.'));
+    els.eventHead.replaceChildren();
+    els.eventBody.replaceChildren(emptyState(true));
     setStatus(
       result.reason === 'offline'
         ? 'Çevrimdışısın. Bağlantını kontrol edip yeniden dene.'
@@ -269,6 +372,14 @@ function goTo(date: ISODate, push = true) {
 els.prev.addEventListener('click', () => goTo(addDays(currentDate, -1)));
 els.next.addEventListener('click', () => goTo(addDays(currentDate, 1)));
 els.today.addEventListener('click', () => goTo(todayISO()));
+els.dateOpen.addEventListener('click', () => {
+  try {
+    els.dateInput.showPicker();
+  } catch {
+    // showPicker desteklenmiyorsa giriş alanına odaklan.
+    els.dateInput.focus();
+  }
+});
 els.dateInput.addEventListener('change', () => {
   if (isValidISODate(els.dateInput.value)) goTo(els.dateInput.value);
 });
@@ -339,6 +450,8 @@ els.cityList.addEventListener('click', (ev) => {
   els.cityOpen.focus();
   setStatus(`Şehir ${city.name} olarak ayarlandı.`);
 });
+
+window.addEventListener('resize', () => renderSun());
 
 // ---------- Başlat ----------
 readStateFromUrl();
