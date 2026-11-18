@@ -78,7 +78,10 @@ function toQuote(q: QuoteRow): DailyQuote {
   return { id: q.id, text: q.quote_text, author: q.author, sourceName: q.source_name, sourceUrl: q.source_url, isDemo: q.is_demo };
 }
 
-/** Sıra: özel günler önce; aynı düzeyde tarihe özel kayıt yıllık kayıttan önce; sonra sort_order. */
+/** Aynı güne iki özel gün düşerse (ör. 19 Mayıs 2027: millî bayram + Kurban Bayramı 4. gün) millî ve anma günleri önce gelir. */
+const themeRank = (e: DayEvent) => (e.theme === 'milli' || e.theme === 'anma' ? 0 : e.theme === 'dini' ? 1 : 2);
+
+/** Sıra: özel günler önce; özel günler arasında tema önceliği; tarihe özel kayıt yıllık kayıttan önce; sonra sort_order. */
 function assemble(date: ISODate, row: DayRow | null, yearlyEvents: YearlyEventRow[], yearlyQuotes: YearlyQuoteRow[]): DayContent {
   const merged = [
     ...(row?.day_events ?? []).map((r) => toEvent(r, true)),
@@ -86,6 +89,7 @@ function assemble(date: ISODate, row: DayRow | null, yearlyEvents: YearlyEventRo
   ].sort(
     (a, b) =>
       Number(b.tier === 'ozel') - Number(a.tier === 'ozel') ||
+      themeRank(a) - themeRank(b) ||
       Number(b.dated) - Number(a.dated) ||
       a.sortOrder - b.sortOrder,
   );
