@@ -33,7 +33,10 @@
 
 .leaf {
   position: relative;
+  z-index: 1;
   overflow: hidden;
+  /* Dikey kaydırma tarayıcıda kalır; yatay sürükleme sayfayı çevirir. */
+  touch-action: pan-y;
   background: var(--c-leaf);
   border: 1px solid #ebe3d5;
   border-radius: var(--radius-leaf);
@@ -754,4 +757,35 @@
   .intro {
     grid-template-columns: 1fr 1.2fr;
   }
+}
+
+/* --- Sayfa çevirme --- */
+.leaf--clone {
+  position: absolute;
+  margin: 0;
+  pointer-events: none;
+}
+.leaf--over {
+  z-index: 3;
+  transform-origin: left center;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+.leaf--under {
+  z-index: 0;
+}
+.leaf--turning {
+  transform-origin: left center;
+  backface-visibility: hidden;
+  will-change: transform;
+  z-index: 2;
+}
+.turn-shade {
+  position: absolute;
+  inset: 0;
+  background: #1f1b18;
+  opacity: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 10;
 }

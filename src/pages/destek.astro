@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import { CONTACT_EMAIL, mailto } from '../lib/legal';
+---
+
+<Base title="Destek" current="/destek" description="KareTakvim destek: widget ekleme, şehir değiştirme, notlar, sorun bildirme.">
+  <main id="main" class="prose">
+    <article class="prose-card legal">
+      <h1>Destek</h1>
+      <p class="meta"><a href="/en/support" hreflang="en" lang="en">English</a></p>
+      <p class="lead">KareTakvim ile ilgili sık karşılaşılan durumlar ve bize nasıl ulaşacağın.</p>
+
+      <h2>Bize ulaş</h2>
+      {
+        CONTACT_EMAIL ? (
+          <p>
+            E-posta: <a href={mailto('KareTakvim destek')}>{CONTACT_EMAIL}</a>. Genellikle birkaç iş günü içinde yanıt veririz. Yazarken cihaz modelini, işletim sistemi sürümünü ve sorunun görüldüğü tarihi eklemen işimizi kolaylaştırır.
+          </p>
+        ) : (
+          <p>Destek e-posta adresi yakında burada olacak. Bu sırada <a href="/iletisim">iletişim sayfasını</a> kullanabilirsin.</p>
+        )
+      }
+
+      <h2>Günler arasında nasıl gezinirim?</h2>
+      <p>Yaprağı sola kaydırınca sonraki güne, sağa kaydırınca önceki güne geçersin. Üst banttaki oklar da aynı işi yapar. Takvim simgesiyle istediğin tarihe gidebilir, “Bugüne dön” ile bugüne dönebilirsin. Web sitesinde klavyenin sol ve sağ ok tuşlarını da kullanabilirsin.</p>
+
+      <h2>Widget nasıl eklenir?</h2>
+      <h3>iPhone</h3>
+      <ol>
+        <li>Ana ekranda boş bir yere basılı tut ve sol üstteki “Düzenle” ya da “+” düğmesine dokun.</li>
+        <li>Listede KareTakvim'i bul; küçük ya da orta boyutu seçip ekle.</li>
+        <li>Kilit ekranı için: kilit ekranına basılı tut, “Özelleştir”, ardından kilit ekranı ve widget alanına dokunup KareTakvim'i seç.</li>
+      </ol>
+      <h3>Android</h3>
+      <ol>
+        <li>Ana ekranda boş bir yere basılı tut ve “Widget'lar”a dokun.</li>
+        <li>KareTakvim'i bul ve ana ekrana sürükle.</li>
+      </ol>
+      <p>Widget gün değişince kendiliğinden yenilenir; yenileme zamanını işletim sistemi belirler. Widget kişisel notunu göstermez.</p>
+
+      <h2>Widget güncellenmiyor</h2>
+      <p>Uygulamayı bir kez açmak widget'ı hemen yeniler. Düşük güç modu açıksa sistem güncellemeyi geciktirebilir. Sorun sürerse widget'ı kaldırıp yeniden ekle.</p>
+
+      <h2>Şehrimi nasıl değiştiririm?</h2>
+      <p>Yapraktaki güneş bölümünde şehir adının yanındaki “değiştir”e ya da Ayarlar › Şehir'e dokun. Konum izni istenmez; 81 il arasından seçim yaparsın.</p>
+
+      <h2>Notlarım kayboldu</h2>
+      <p>Notlar yalnızca cihazında saklanır. Uygulamayı silip yeniden kurduysan, telefonu değiştirdiysen veya tarayıcı verilerini temizlediysen notlar geri getirilemez; sunucumuzda bir kopyası yoktur.</p>
+
+      <h2>Bugünün yaprağında bilgi yok</h2>
+      <p>Her güne kaynakla doğrulanmış bir bilgi eklemeye çalışıyoruz. Doğrulanmamış bilgi göstermediğimiz için bazı günlerde yalnızca söz ve güneş saatleri görünebilir.</p>
+
+      <h2>Yanlış bir bilgi gördüm</h2>
+      <p>Tarihi, yapraktaki bilgiyi ve doğru olduğunu düşündüğün kaynağı bize yaz. Kaynakla doğrulanan düzeltmeleri yayımlarız.</p>
+
+      <h2>Verilerimi nasıl silerim?</h2>
+      <p>Hesap olmadığı için bizde silinecek kişisel veri yoktur. Cihazındaki tüm verileri silmek için uygulamayı kaldırman yeterli. Ayrıntılar: <a href="/gizlilik#silme">Gizlilik › Verilerini silme</a>.</p>
+
+      <p class="related"><a href="/sss">Sık sorulan sorular</a> · <a href="/gizlilik">Gizlilik politikası</a> · <a href="/kullanim-kosullari">Kullanım koşulları</a></p>
+    </article>
+  </main>
+</Base>

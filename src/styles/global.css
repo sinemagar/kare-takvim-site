@@ -188,3 +188,83 @@ a {
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+
+/* Alt bilgi: yasal bağlantılar */
+.site-foot {
+  text-align: center;
+  padding: 0 var(--s-4) var(--s-6);
+  font-size: 0.8125rem;
+  color: var(--c-ink-muted);
+}
+.site-foot nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-1) var(--s-4);
+  margin-bottom: var(--s-2);
+}
+.site-foot a {
+  color: var(--c-ink-muted);
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Yasal sayfalar */
+.legal .meta {
+  font-size: 0.8125rem;
+  color: var(--c-ink-muted);
+  margin-bottom: var(--s-3);
+}
+.legal h3 {
+  font-size: 1.05rem;
+  margin: var(--s-4) 0 var(--s-1);
+}
+.legal ul,
+.legal ol {
+  padding-left: 1.25rem;
+}
+.legal li + li {
+  margin-top: var(--s-1);
+}
+.legal .toc {
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-sm);
+  padding: var(--s-3) var(--s-4);
+  margin: var(--s-4) 0;
+  font-size: 0.9rem;
+}
+.legal .toc ol {
+  margin: 0;
+}
+.table-wrap {
+  overflow-x: auto;
+  margin: var(--s-3) 0;
+}
+.legal table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+.legal th,
+.legal td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--s-2) var(--s-2);
+  border-bottom: 1px solid var(--c-line);
+}
+.legal th {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--c-ink-muted);
+}
+.legal h2[id] {
+  scroll-margin-top: var(--s-4);
+}
+.legal .related {
+  margin-top: var(--s-6);
+  font-size: 0.875rem;
+}

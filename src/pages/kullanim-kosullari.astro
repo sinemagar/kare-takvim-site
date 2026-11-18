@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import { CONTACT_EMAIL, LEGAL_UPDATED, mailto, PUBLISHER } from '../lib/legal';
+---
+
+<Base title="Kullanım koşulları" current="/kullanim-kosullari" description="KareTakvim mobil uygulaması ve web sitesi kullanım koşulları.">
+  <main id="main" class="prose">
+    <article class="prose-card legal">
+      <h1>Kullanım koşulları</h1>
+      <p class="meta">Son güncelleme: {LEGAL_UPDATED}</p>
+      <p class="lead">KareTakvim'i kullanarak bu koşulları kabul etmiş olursun. Koşullar kısa ve sade tutuldu.</p>
+
+      <h2>1. Hizmet</h2>
+      <p>KareTakvim; tarih, o güne ait önemli gün veya tarihî bilgi, günün sözü, seçtiğin ilde güneşin doğuş ve batış saatleri ve güne özel kişisel not alanı sunan ücretsiz bir günlük yaprak takvimidir. Hizmetin yayıncısı: {PUBLISHER}.</p>
+
+      <h2>2. İçeriğin niteliği</h2>
+      <p>Önemli gün ve tarihî bilgiler kaynaklardan derlenir ve yayımlanmadan önce kontrol edilir. Yine de hatasız olduğu garanti edilmez; bilgiler genel kültür amaçlıdır. Resmî tatil, dinî gün veya hukuki sonuç doğuran tarihler için resmî kaynakları esas al.</p>
+      <p>Güneş saatleri il merkezinin koordinatlarıyla hesaplanır; ilçe ve rakıma göre birkaç dakika farklılık gösterebilir. Namaz vakti veya seyrüsefer amacıyla kullanılmamalıdır.</p>
+
+      <h2>3. Notların</h2>
+      <p>Yazdığın notlar sana aittir ve yalnızca cihazında saklanır. Notların yedeklenmesi ve korunması senin sorumluluğundadır; uygulamayı silmek veya tarayıcı verilerini temizlemek notları kalıcı olarak siler. Ayrıntılar için <a href="/gizlilik">gizlilik politikasına</a> bak.</p>
+
+      <h2>4. Fikrî mülkiyet</h2>
+      <p>KareTakvim adı, tasarımı, illüstrasyonları ve yazılımı üzerindeki haklar yayıncıya ({PUBLISHER}) aittir. Kişisel ve ticari olmayan kullanım için yaprakların ekran görüntüsünü paylaşabilirsin. Alıntılanan sözlerin ve kaynak metinlerin hakları sahiplerine aittir.</p>
+
+      <h2>5. Kabul edilebilir kullanım</h2>
+      <p>Hizmeti bozacak, içerik servisine aşırı yük bindirecek veya içeriği otomatik yollarla toplu olarak kopyalayacak şekilde kullanmamalısın.</p>
+
+      <h2>6. Sorumluluk sınırı</h2>
+      <p>Hizmet “olduğu gibi” sunulur. Yürürlükteki mevzuatın izin verdiği ölçüde; içerik hatalarından, hizmetin kesintiye uğramasından veya cihazındaki verilerin kaybından doğan dolaylı zararlardan sorumluluk kabul edilmez.</p>
+
+      <h2>7. Mağaza koşulları</h2>
+      <p>Uygulamayı App Store'dan indirdiysen Apple'ın standart son kullanıcı lisans sözleşmesi (EULA), Google Play'den indirdiysen Google Play hizmet şartları da geçerlidir. Bu koşullarla çelişki olursa ilgili mağazanın zorunlu hükümleri önceliklidir.</p>
+
+      <h2>8. Değişiklikler ve uygulanacak hukuk</h2>
+      <p>Koşullar güncellenebilir; güncel hâli bu sayfadadır. Bu koşullara Türkiye Cumhuriyeti hukuku uygulanır.</p>
+
+      <h2>9. İletişim</h2>
+      {
+        CONTACT_EMAIL ? (
+          <p><a href={mailto('KareTakvim kullanım koşulları')}>{CONTACT_EMAIL}</a></p>
+        ) : (
+          <p><a href="/iletisim">İletişim sayfası</a></p>
+        )
+      }
+    </article>
+  </main>
+</Base>

@@ -1,7 +1,7 @@
 // Günlük sayfa etkileşimi: URL durumu (?tarih=&sehir=), içerik yükleme, güneş saatleri, şehir seçimi ve tarayıcı notu.
 // Tüm dinamik metin textContent ile yazılır (HTML enjeksiyonu yok).
 import { CITIES, DEFAULT_CITY_ID, findCity, searchCities } from '../lib/cities';
-import { loadCities, loadDay } from '../lib/content';
+import { loadCities, loadDay, type LoadResult } from '../lib/content';
 import { categoryKey, pageArtKey } from '../lib/art';
 import { addDays, dateParts, isValidISODate, todayISO, yearProgress } from '../lib/date';
 import { deleteNote, getNote, saveNote } from '../lib/notes';
@@ -159,7 +159,7 @@ function setStatus(message: string, kind: 'info' | 'error' = 'info', retry = fal
     b.type = 'button';
     b.className = 'btn';
     b.textContent = 'Yeniden dene';
-    b.addEventListener('click', () => void refreshContent());
+    b.addEventListener('click', () => void refreshContent(true));
     els.status.append(b);
   }
 }
@@ -308,14 +308,48 @@ function renderContent(day: DayContent) {
   els.demoBadge.hidden = !hasDemo(day);
 }
 
-async function refreshContent() {
+// ---------- İçerik önbelleği ----------
+// Oturum boyunca yüklenen günler bellekte tutulur; komşu günler önceden hazırlanır.
+// Böylece sayfa çevrilirken alttaki gün iskelet göstermeden, dolu gelir.
+const dayMemory = new Map<ISODate, LoadResult>();
+const dayPending = new Map<ISODate, Promise<LoadResult>>();
+
+function fetchDay(date: ISODate, force = false): Promise<LoadResult> {
+  if (!force) {
+    const hit = dayMemory.get(date);
+    if (hit) return Promise.resolve(hit);
+    const p = dayPending.get(date);
+    if (p) return p;
+  }
+  const p = loadDay(date).then((r) => {
+    if (r.ok && !r.offline) dayMemory.set(date, r);
+    dayPending.delete(date);
+    return r;
+  });
+  dayPending.set(date, p);
+  return p;
+}
+
+function prefetchAround(date: ISODate) {
+  void fetchDay(addDays(date, 1));
+  void fetchDay(addDays(date, -1));
+}
+
+async function refreshContent(force = false) {
   const token = ++loadToken;
   const date = currentDate;
-  renderSkeleton();
   setStatus('');
-  const result = await loadDay(date);
+  const hit = force ? undefined : dayMemory.get(date);
+  if (!hit) renderSkeleton();
+  const result = hit ?? (await fetchDay(date, force));
   if (token !== loadToken) return; // Kullanıcı bu sırada başka güne geçti.
+  prefetchAround(date);
   if (result.ok) {
+    if (hit) {
+      // İskelet atlandı; önceki günün teması kalmasın.
+      delete leaf.dataset.theme;
+      delete leaf.dataset.tier;
+    }
     renderContent(result.day);
     if (result.offline) setStatus('Bağlantı kurulamadı. Daha önce kaydedilen içerik gösteriliyor.');
   } else {
@@ -376,18 +410,137 @@ els.noteDelete.addEventListener('click', () => {
 });
 
 // ---------- Gezinme ----------
-function goTo(date: ISODate, push = true) {
-  if (!isValidISODate(date)) return;
+/** Tarihi ekrana çizer (adres çubuğunu değiştirmez). */
+function show(date: ISODate) {
   currentDate = date;
-  writeUrl(push);
   renderDate();
   renderSun();
   renderNote();
   void refreshContent();
 }
 
-els.prev.addEventListener('click', () => goTo(addDays(currentDate, -1)));
-els.next.addEventListener('click', () => goTo(addDays(currentDate, 1)));
+function goTo(date: ISODate, push = true) {
+  if (!isValidISODate(date)) return;
+  show(date);
+  writeUrl(push);
+}
+
+// ---------- Sayfa çevirme ----------
+// Yaprak sol kenarındaki menteşe etrafında okuyucuya doğru kalkar; hedef gün altta hazır bekler.
+// Sonraki gün: eski yaprağın kopyası üstte kalkar, gerçek yaprak altta yeni günü gösterir.
+// Önceki gün: eski yaprağın kopyası altta kalır, gerçek yaprak yeni günle üstten iner.
+const TURN_MS = 560;
+const MAX_ANGLE = 96;
+const EASE = 'cubic-bezier(0.25, 0.8, 0.3, 1)';
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const pad = leaf.parentElement!;
+
+type Turn = {
+  dir: 1 | -1;
+  from: ISODate;
+  target: ISODate;
+  /** Dönen yaprak (sonraki: kopya, önceki: gerçek yaprak). */
+  mover: HTMLElement;
+  /** Alttaki yaprağın üstündeki gölge. */
+  underShade: HTMLElement;
+  moverShade: HTMLElement;
+  clone: HTMLElement;
+  /** 0 = dönen yaprak düz, 1 = tamamen kalkmış. */
+  lift: number;
+};
+let turn: Turn | null = null;
+
+function shadeEl() {
+  const d = document.createElement('div');
+  d.className = 'turn-shade';
+  d.setAttribute('aria-hidden', 'true');
+  return d;
+}
+
+function applyLift(t: Turn, lift: number) {
+  t.lift = lift;
+  t.mover.style.transform = `perspective(1800px) rotateY(${-lift * MAX_ANGLE}deg)`;
+  t.moverShade.style.opacity = String(lift < 0.6 ? (lift / 0.6) * 0.16 : 0.16 + ((lift - 0.6) / 0.4) * 0.22);
+  t.underShade.style.opacity = String((1 - lift) * 0.22);
+}
+
+function beginTurn(dir: 1 | -1): Turn {
+  const from = currentDate;
+  const target = addDays(from, dir);
+  // Eski yaprağın donmuş kopyası: kimlikler ve odaklanabilirlik kaldırılır.
+  const clone = leaf.cloneNode(true) as HTMLElement;
+  clone.removeAttribute('data-leaf');
+  clone.querySelectorAll('[id]').forEach((n) => n.removeAttribute('id'));
+  clone.setAttribute('aria-hidden', 'true');
+  clone.inert = true;
+  clone.classList.add('leaf--clone');
+  clone.style.top = `${leaf.offsetTop}px`;
+  clone.style.left = `${leaf.offsetLeft}px`;
+  clone.style.width = `${leaf.offsetWidth}px`;
+  clone.style.height = `${leaf.offsetHeight}px`;
+  const cloneShade = shadeEl();
+  clone.append(cloneShade);
+  const leafShade = shadeEl();
+  leaf.append(leafShade);
+
+  let t: Turn;
+  if (dir === 1) {
+    clone.classList.add('leaf--over');
+    pad.append(clone);
+    t = { dir, from, target, mover: clone, moverShade: cloneShade, underShade: leafShade, clone, lift: 0 };
+  } else {
+    clone.classList.add('leaf--under');
+    leaf.before(clone);
+    leaf.classList.add('leaf--turning');
+    t = { dir, from, target, mover: leaf, moverShade: leafShade, underShade: cloneShade, clone, lift: 1 };
+  }
+  show(target);
+  applyLift(t, t.lift);
+  turn = t;
+  return t;
+}
+
+function cleanupTurn(t: Turn) {
+  t.clone.remove();
+  leaf.querySelectorAll(':scope > .turn-shade').forEach((n) => n.remove());
+  leaf.classList.remove('leaf--turning');
+  leaf.style.transform = '';
+  turn = null;
+}
+
+function settleTurn(t: Turn, commit: boolean, velocity = 0) {
+  const to = (t.dir === 1) === commit ? 1 : 0;
+  const remaining = Math.abs(to - t.lift);
+  const speed = Math.min(2.2, 1 + Math.abs(velocity) * 1.5);
+  const duration = Math.max(120, (TURN_MS * Math.max(remaining, 0.25)) / speed);
+  const start = t.lift;
+  const t0 = performance.now();
+  const ease = (x: number) => 1 - Math.pow(1 - x, 3);
+  const frame = (now: number) => {
+    const k = Math.min(1, (now - t0) / duration);
+    applyLift(t, start + (to - start) * ease(k));
+    if (k < 1) {
+      requestAnimationFrame(frame);
+      return;
+    }
+    cleanupTurn(t);
+    if (commit) writeUrl(true);
+    else show(t.from);
+  };
+  requestAnimationFrame(frame);
+}
+
+function step(dir: 1 | -1) {
+  if (turn) return;
+  if (reducedMotion.matches) {
+    goTo(addDays(currentDate, dir));
+    return;
+  }
+  settleTurn(beginTurn(dir), true);
+}
+
+els.prev.addEventListener('click', () => step(-1));
+els.next.addEventListener('click', () => step(1));
 els.today.addEventListener('click', () => goTo(todayISO()));
 els.dateOpen.addEventListener('click', () => {
   try {
@@ -400,12 +553,85 @@ els.dateOpen.addEventListener('click', () => {
 els.dateInput.addEventListener('change', () => {
   if (isValidISODate(els.dateInput.value)) goTo(els.dateInput.value);
 });
+
+// Sürükleme: dokunma ve fare. Dikey hareket sayfayı kaydırır (touch-action: pan-y).
+let drag: { x: number; y: number; t: number; id: number; active: Turn | null; lastX: number; lastT: number } | null = null;
+let suppressClick = false;
+
+leaf.addEventListener('pointerdown', (ev) => {
+  if (turn || ev.button !== 0) return;
+  if ((ev.target as HTMLElement).closest('input, textarea, select, [contenteditable], dialog')) return;
+  drag = { x: ev.clientX, y: ev.clientY, t: ev.timeStamp, id: ev.pointerId, active: null, lastX: ev.clientX, lastT: ev.timeStamp };
+});
+
+window.addEventListener('pointermove', (ev) => {
+  if (!drag || ev.pointerId !== drag.id) return;
+  const dx = ev.clientX - drag.x;
+  const dy = ev.clientY - drag.y;
+  if (!drag.active) {
+    if (Math.abs(dx) < 12 || Math.abs(dx) < Math.abs(dy) * 1.5) {
+      if (Math.abs(dy) > 14) drag = null; // dikey kaydırma
+      return;
+    }
+    if (reducedMotion.matches) return;
+    drag.active = beginTurn(dx < 0 ? 1 : -1);
+    try {
+      leaf.setPointerCapture(ev.pointerId);
+    } catch {
+      // Yakalama desteklenmezse window dinleyicisi yeterli.
+    }
+  }
+  const t = drag.active;
+  const w = leaf.offsetWidth * 0.85;
+  const travel = t.dir === 1 ? -dx : dx;
+  const p = Math.max(0, Math.min(1, travel / w));
+  applyLift(t, t.dir === 1 ? p : 1 - p);
+  drag.lastX = ev.clientX;
+  drag.lastT = ev.timeStamp;
+  ev.preventDefault();
+});
+
+function endDrag(ev: PointerEvent, cancelled: boolean) {
+  if (!drag || ev.pointerId !== drag.id) return;
+  const d = drag;
+  drag = null;
+  if (!d.active) {
+    // Hareket eşiği aşılmadıysa tıklama ve reduced-motion durumunda doğrudan geçiş.
+    const dx = ev.clientX - d.x;
+    if (reducedMotion.matches && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(ev.clientY - d.y) * 1.5) {
+      goTo(addDays(currentDate, dx < 0 ? 1 : -1));
+    }
+    return;
+  }
+  suppressClick = true;
+  const t = d.active;
+  const dx = ev.clientX - d.x;
+  const travel = t.dir === 1 ? -dx : dx;
+  const dt = Math.max(1, ev.timeStamp - d.lastT);
+  const v = ((ev.clientX - d.lastX) / dt) * (t.dir === 1 ? -1 : 1); // px/ms, çevirme yönünde
+  const commit = !cancelled && (travel > leaf.offsetWidth * 0.3 || v > 0.5);
+  settleTurn(t, commit, v);
+}
+window.addEventListener('pointerup', (ev) => endDrag(ev, false));
+window.addEventListener('pointercancel', (ev) => endDrag(ev, true));
+// Sürüklemeden sonra parmağın altındaki düğme tıklanmasın.
+leaf.addEventListener(
+  'click',
+  (ev) => {
+    if (!suppressClick) return;
+    suppressClick = false;
+    ev.preventDefault();
+    ev.stopPropagation();
+  },
+  true,
+);
+
 document.addEventListener('keydown', (ev) => {
   const t = ev.target as HTMLElement | null;
   if (t && (t.closest('input, textarea, select, dialog') || t.isContentEditable)) return;
   if (ev.altKey || ev.ctrlKey || ev.metaKey) return;
-  if (ev.key === 'ArrowLeft') goTo(addDays(currentDate, -1));
-  if (ev.key === 'ArrowRight') goTo(addDays(currentDate, 1));
+  if (ev.key === 'ArrowLeft') step(-1);
+  if (ev.key === 'ArrowRight') step(1);
 });
 window.addEventListener('popstate', () => {
   readStateFromUrl();

@@ -7,26 +7,34 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
-  current?: '/' | '/hakkinda' | '/sss' | '/gizlilik' | '/iletisim';
+  current?: '/' | '/hakkinda' | '/sss' | '/gizlilik' | '/iletisim' | '/destek' | '/kullanim-kosullari';
+  lang?: 'tr' | 'en';
 }
 const {
   title,
   description = 'KareTakvim: eski günlük yaprak takvimi hissiyle bugünün önemli günü, günün sözü, güneş saatleri ve güne özel notun.',
   current,
+  lang = 'tr',
 } = Astro.props;
 const fullTitle = title ? `${title} · KareTakvim` : 'KareTakvim — Günün yaprağı';
 const links = [
   { href: '/', label: 'Günün yaprağı' },
   { href: '/hakkinda', label: 'Hakkında' },
   { href: '/sss', label: 'SSS' },
-  { href: '/gizlilik', label: 'Gizlilik' },
+  { href: '/destek', label: 'Destek' },
   { href: '/iletisim', label: 'İletişim' },
+] as const;
+const legal = [
+  { href: '/gizlilik', label: 'Gizlilik politikası' },
+  { href: '/kullanim-kosullari', label: 'Kullanım koşulları' },
+  { href: '/en/privacy', label: 'Privacy (EN)', lang: 'en' },
+  { href: '/en/support', label: 'Support (EN)', lang: 'en' },
 ] as const;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined;
 ---
 
 <!doctype html>
-<html lang="tr">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -36,7 +44,7 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
     {canonical && <link rel="canonical" href={canonical} />}
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:locale" content={lang === 'en' ? 'en_US' : 'tr_TR'} />
     <meta property="og:image" content={Astro.site ? new URL('/og.jpg', Astro.site).toString() : '/og.jpg'} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -45,7 +53,7 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   </head>
   <body>
-    <a class="skip-link" href="#main">İçeriğe geç</a>
+    <a class="skip-link" href="#main">{lang === 'en' ? 'Skip to content' : 'İçeriğe geç'}</a>
     <slot />
     <nav class="site-nav" aria-label="Site">
       {
@@ -56,5 +64,17 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString(
         ))
       }
     </nav>
+    <footer class="site-foot">
+      <nav aria-label="Yasal">
+        {
+          legal.map((l) => (
+            <a href={l.href} lang={'lang' in l ? l.lang : undefined} aria-current={current === l.href ? 'page' : undefined}>
+              {l.label}
+            </a>
+          ))
+        }
+      </nav>
+      <p>© 2026 KareTakvim</p>
+    </footer>
   </body>
 </html>

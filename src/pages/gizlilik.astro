@@ -1,28 +1,99 @@
 ---
 import Base from '../layouts/Base.astro';
+import { CONTACT_EMAIL, LEGAL_UPDATED, mailto, PUBLISHER } from '../lib/legal';
 ---
 
-<Base title="Gizlilik" current="/gizlilik" description="KareTakvim gizlilik açıklaması: notlar tarayıcıda kalır, konum istenmez.">
+<Base title="Gizlilik politikası" current="/gizlilik" description="KareTakvim gizlilik politikası ve KVKK aydınlatma metni: hesap yok, konum yok, notlar yalnızca cihazında.">
   <main id="main" class="prose">
-    <div class="prose-card">
-      <h1>Gizlilik</h1>
-      <p class="lead">Kısaca: notun sende kalır, konumunu istemeyiz, hesap açtırmayız.</p>
+    <article class="prose-card legal">
+      <h1>Gizlilik politikası</h1>
+      <p class="meta">Son güncelleme: {LEGAL_UPDATED} · <a href="/en/privacy" hreflang="en" lang="en">English</a></p>
+      <p class="lead">Kısaca: KareTakvim hesap açtırmaz, konumunu istemez, reklam ve izleme aracı kullanmaz. Yazdığın notlar yalnızca senin cihazında kalır.</p>
 
-      <h2>Notlar</h2>
-      <p>Web sitesinde yazdığın notlar yalnızca bu tarayıcının yerel deposunda (localStorage) saklanır. Notlar sunucumuza, içerik servisimize veya herhangi bir analitik aracına gönderilmez. Mobil uygulamadaki notlarla eşitlenmez.</p>
-      <p>Tarayıcı verilerini, çerezleri ve site verilerini temizlersen ya da gizli pencere kullanırsan notların kaybolur. Bir notu yaprağın altındaki "Sil" düğmesiyle tek tek silebilirsin.</p>
+      <p>Bu metin KareTakvim mobil uygulaması (iOS ve Android), uygulamanın widget'ları ve karetakvim web sitesi için geçerlidir. Aynı zamanda 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) kapsamındaki aydınlatma metnidir.</p>
 
-      <h2>Şehir seçimi</h2>
-      <p>Güneş saatleri için seçtiğin şehir yine bu tarayıcıda ve paylaştığın bağlantıda tutulur. GPS veya cihaz konumu istenmez.</p>
+      <nav class="toc" aria-label="İçindekiler">
+        <ol>
+          <li><a href="#ozet">Özet tablo</a></li>
+          <li><a href="#cihazda">Cihazında kalan veriler</a></li>
+          <li><a href="#sunucu">Sunuculara giden istekler</a></li>
+          <li><a href="#olmayan">Toplamadığımız veriler</a></li>
+          <li><a href="#silme">Verilerini silme</a></li>
+          <li><a href="#kvkk">KVKK aydınlatma metni</a></li>
+          <li><a href="#cocuklar">Çocuklar</a></li>
+          <li><a href="#degisiklik">Değişiklikler ve iletişim</a></li>
+        </ol>
+      </nav>
 
-      <h2>Günlük içerik</h2>
-      <p>Yaprağın önemli gün ve söz içeriği, herkese açık bir içerik servisinden (Supabase) salt okunur olarak alınır. Bu istekte notun veya kişisel bilgin yer almaz. Alınan içerik çevrimdışı gösterim için tarayıcında önbelleğe alınabilir.</p>
+      <h2 id="ozet">1. Özet tablo</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th scope="col">Veri</th><th scope="col">Nerede durur?</th><th scope="col">Bize gelir mi?</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Güne yazdığın notlar</td><td>Yalnızca cihazında (uygulamada yerel veritabanı, web'de tarayıcının yerel deposu)</td><td>Hayır</td></tr>
+            <tr><td>Seçtiğin şehir</td><td>Cihazında; web'de ayrıca paylaştığın bağlantıda</td><td>Hayır</td></tr>
+            <tr><td>Günlük içerik önbelleği</td><td>Cihazında (çevrimdışı gösterim için)</td><td>Hayır</td></tr>
+            <tr><td>Widget verisi</td><td>Cihazında, uygulama ile widget arasında paylaşılan alanda. Not içermez.</td><td>Hayır</td></tr>
+            <tr><td>İçerik isteği (tarih)</td><td>İçerik servisine gider; IP adresin teknik olarak görülür</td><td>Kişisel veri olarak işlemeyiz</td></tr>
+            <tr><td>Konum, kişiler, fotoğraf, reklam kimliği</td><td>İstenmez, erişilmez</td><td>Hayır</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-      <h2>Çerez ve analitik</h2>
-      <p>Bu sürümde reklam, izleme çerezi veya analitik aracı kullanılmaz. İleride toplu kullanım ölçümü eklenirse not içeriği ve konum hiçbir zaman ölçülmez; bu sayfa güncellenir.</p>
+      <h2 id="cihazda">2. Cihazında kalan veriler</h2>
+      <h3>Notlar</h3>
+      <p>Bir güne yazdığın not, “Kaydet”e bastığında yalnızca cihazına kaydedilir: mobil uygulamada telefonundaki yerel veritabanına, web sitesinde bu tarayıcının yerel deposuna (localStorage). Notlar hiçbir sunucuya gönderilmez, cihazlar arasında eşitlenmez, yedeklemesini biz yapmayız. Widget ve kilit ekranı notunu asla göstermez.</p>
+      <p>Telefonunun kendi yedeklemesi (iCloud veya Google yedeği) açıksa, işletim sistemi uygulama verilerini kendi yedeğine dahil edebilir. Bu yedek Apple ya da Google hesabına aittir; bizim erişimimiz yoktur.</p>
+      <h3>Şehir ve tercih</h3>
+      <p>Güneşin doğuş ve batış saatleri için seçtiğin il, cihazında saklanır. Saatler il merkezinin koordinatlarıyla cihazında hesaplanır. GPS veya cihaz konumu istenmez.</p>
+      <h3>İçerik önbelleği</h3>
+      <p>İnternet bağlantın olmadığında da yaprağı gösterebilmek için daha önce görüntülediğin günlerin içeriği (olay, söz) cihazında önbelleğe alınır. Bu içerik herkese açıktır ve seninle ilgili bilgi taşımaz.</p>
 
-      <h2>İletişim</h2>
-      <p>Sorular için <a href="/iletisim">iletişim sayfasına</a> bakabilirsin.</p>
-    </div>
+      <h2 id="sunucu">3. Sunuculara giden istekler</h2>
+      <p>Günlük içerik (önemli gün, tarihte bugün, günün sözü), herkese açık ve salt okunur bir içerik servisinden alınır. Bu servisin altyapısını Supabase sağlar. İstekte yalnızca hangi tarihlerin içeriğinin istendiği bulunur; notun, şehrin veya bir kimlik bilgin bulunmaz.</p>
+      <p>İnternet üzerindeki her istekte olduğu gibi cihazının IP adresi ve tarayıcı/işletim sistemi bilgisi, isteği karşılayan sunucu tarafından teknik olarak görülür ve altyapı sağlayıcısının güvenlik ve işletim kayıtlarında kısa süre tutulabilir. Web sitesi bir barındırma hizmeti üzerinden sunulur ve aynı tür teknik erişim kayıtları orada da oluşabilir. Bu kayıtları profil çıkarmak, seni tanımak veya reklam için kullanmayız.</p>
+      <p>Bir olayın “kaynak” bağlantısına dokunduğunda ilgili dış site (ör. bir ansiklopedi) tarayıcında açılır. O sitenin kendi gizlilik politikası geçerlidir.</p>
+
+      <h2 id="olmayan">4. Toplamadığımız veriler</h2>
+      <ul>
+        <li>Hesap, ad, e-posta veya telefon numarası istemeyiz.</li>
+        <li>Konum, kişiler, fotoğraflar, mikrofon veya kamera izni istemeyiz.</li>
+        <li>Reklam göstermeyiz, reklam kimliği (IDFA/AAID) kullanmayız, uygulamalar arası izleme yapmayız.</li>
+        <li>Analitik, kullanım ölçümü veya çökme raporlama aracı kullanmayız.</li>
+        <li>Web sitesinde çerez kullanmayız; yalnızca yukarıda anlatılan yerel depo kullanılır.</li>
+      </ul>
+      <p>İleride bu durumu değiştirecek bir özellik eklenirse, eklenmeden önce bu sayfa güncellenir ve gerekiyorsa açık rızan istenir.</p>
+
+      <h2 id="silme">5. Verilerini silme</h2>
+      <ul>
+        <li><strong>Tek bir not:</strong> Yapraktaki “Sil” bağlantısıyla.</li>
+        <li><strong>Uygulamadaki tüm veriler:</strong> Uygulamayı cihazından silmek; notlar, şehir seçimi ve önbellek de silinir.</li>
+        <li><strong>Web'deki tüm veriler:</strong> Tarayıcının site verilerini temizlemek.</li>
+      </ul>
+      <p>Hesap olmadığı ve notlar bize gelmediği için bizim tarafımızda silinecek kişisel veri bulunmaz. Silinen notlar geri getirilemez.</p>
+
+      <h2 id="kvkk">6. KVKK aydınlatma metni</h2>
+      <p><strong>Veri sorumlusu:</strong> {PUBLISHER}. İletişim bilgisi aşağıdadır.</p>
+      <p><strong>İşlenen veriler ve amaç:</strong> KareTakvim, kullanıcıyı tanımlayan kişisel veri toplamaz. Günlük içeriğin sana iletilmesi sırasında IP adresi ve cihaz/tarayıcı bilgisi gibi teknik veriler, yalnızca hizmetin sunulması ve güvenliği amacıyla altyapı sağlayıcıları tarafından geçici olarak işlenebilir.</p>
+      <p><strong>Hukuki sebep:</strong> KVKK md. 5/2-f (veri sorumlusunun meşru menfaati: hizmetin teknik olarak sunulması ve güvenliği).</p>
+      <p><strong>Aktarım:</strong> İçerik servisi ve barındırma altyapısı yurt dışında bulunan hizmet sağlayıcılar (Supabase ve web barındırma sağlayıcısı) tarafından sunulabilir. Bu nedenle teknik erişim kayıtları yurt dışındaki sunucularda oluşabilir. Bu veriler üçüncü kişilerle pazarlama amacıyla paylaşılmaz.</p>
+      <p><strong>Toplama yöntemi:</strong> Uygulamanın veya sitenin içerik istemesi sırasında otomatik yollarla.</p>
+      <p><strong>Hakların:</strong> KVKK md. 11 uyarınca kişisel verinin işlenip işlenmediğini öğrenme, bilgi talep etme, düzeltme veya silinmesini isteme, itiraz etme ve zararın giderilmesini talep etme haklarına sahipsin. Başvurunu aşağıdaki e-posta adresine iletebilirsin; en geç 30 gün içinde yanıtlanır.</p>
+
+      <h2 id="cocuklar">7. Çocuklar</h2>
+      <p>KareTakvim her yaştan kullanıcıya uygun genel bir takvimdir. Çocuklardan bilerek kişisel veri toplamayız; zaten hiçbir kullanıcıdan hesap veya kimlik bilgisi istemeyiz.</p>
+
+      <h2 id="degisiklik">8. Değişiklikler ve iletişim</h2>
+      <p>Bu politika değişirse güncel hâli bu sayfada yayımlanır ve üstteki “Son güncelleme” tarihi değişir.</p>
+      {
+        CONTACT_EMAIL ? (
+          <p>Sorular ve KVKK başvuruları için: <a href={mailto('KareTakvim gizlilik')}>{CONTACT_EMAIL}</a></p>
+        ) : (
+          <p>Sorular ve KVKK başvuruları için <a href="/iletisim">iletişim sayfasını</a> kullanabilirsin.</p>
+        )
+      }
+    </article>
   </main>
 </Base>

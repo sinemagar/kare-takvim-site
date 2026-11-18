@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-const email = import.meta.env.PUBLIC_CONTACT_EMAIL;
+import { CONTACT_EMAIL as email } from '../lib/legal';
 ---
 
 <Base title="İletişim" current="/iletisim" description="KareTakvim'e hata ve içerik düzeltme bildirimi.">
@@ -17,6 +17,7 @@ const email = import.meta.env.PUBLIC_CONTACT_EMAIL;
           <p>İletişim adresi yakında burada olacak.</p>
         )
       }
+      <p>Kullanımla ilgili sorular için önce <a href="/destek">destek sayfasına</a> göz atabilirsin.</p>
       <h2>İçerik düzeltme bildirimi</h2>
       <p>Lütfen ilgili tarihi, yapraktaki bilgiyi ve doğru olduğunu düşündüğün kaynağı ekle. Kaynakla doğrulanan düzeltmeler yayımlanır.</p>
     </div>

@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import { CONTACT_EMAIL, mailto } from '../../lib/legal';
+---
+
+<Base title="Support" lang="en" description="KareTakvim support: navigation, widgets, city, notes and contact.">
+  <main id="main" class="prose">
+    <article class="prose-card legal">
+      <h1>Support</h1>
+      <p class="meta"><a href="/destek" hreflang="tr" lang="tr">Türkçe</a></p>
+      <p class="lead">KareTakvim is a Turkish daily tear-off calendar: each day shows the date, a notable day or on-this-day event, a quote, sunrise and sunset for your province, and a private note.</p>
+
+      <h2>Contact</h2>
+      {
+        CONTACT_EMAIL ? (
+          <p>Email <a href={mailto('KareTakvim support')}>{CONTACT_EMAIL}</a>. We usually reply within a few business days.</p>
+        ) : (
+          <p>A support email address will be listed here soon.</p>
+        )
+      }
+
+      <h2>Navigating days</h2>
+      <p>Swipe the page left for the next day and right for the previous day, or use the arrows on the red band. The calendar icon jumps to any date; "Bugüne dön" returns to today.</p>
+
+      <h2>Adding a widget</h2>
+      <p><strong>iPhone:</strong> touch and hold an empty area of the Home Screen, tap Edit or +, find KareTakvim and add the small or medium widget. For the Lock Screen, touch and hold the Lock Screen, tap Customize, then the widget area, and choose KareTakvim.</p>
+      <p><strong>Android:</strong> touch and hold an empty area of the Home Screen, tap Widgets and drag KareTakvim onto the screen.</p>
+      <p>Widgets never show your personal notes. Opening the app refreshes the widget immediately.</p>
+
+      <h2>Notes</h2>
+      <p>Notes are stored only on your device. They cannot be recovered after uninstalling the app or clearing browser data.</p>
+
+      <h2>Privacy</h2>
+      <p>No account, no location, no tracking. See the <a href="/en/privacy">Privacy Policy</a>.</p>
+    </article>
+  </main>
+</Base>
