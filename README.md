@@ -30,7 +30,7 @@ npm run sun:check         # güneş saatlerini referansla karşılaştırır (�
 
 `PUBLIC_` ile başlayan her değer statik çıktıya gömülür. Supabase kurulumu: [`../karetakvim-kaynak-dokuman/supabase/README.md`](../karetakvim-kaynak-dokuman/supabase/README.md). Bu repo ayrı tutulduğu için SQL dosyaları ve kurulum adımları o klasördedir.
 
-**Şu an Supabase bağlı değil.** Site açıkça "Demo içerik" etiketli yerel veriyle çalışır.
+Supabase projesi 18 Kasım 2026'da kuruldu ve doğrulandı. `.env` yoksa site yerel demo veriye düşer. Veritabanındaki içerik de şimdilik demodur ve arayüzde "Demo içerik" etiketiyle görünür.
 
 ## Yapı
 
