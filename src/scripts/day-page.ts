@@ -6,7 +6,7 @@ import { addDays, dateParts, isValidISODate, todayISO } from '../lib/date';
 import { deleteNote, getNote, saveNote } from '../lib/notes';
 import { read, write } from '../lib/storage';
 import { sunTimes } from '../lib/sun';
-import { hasDemo } from '../lib/supabase-query';
+import { eventLabel, hasDemo } from '../lib/supabase-query';
 import type { City, DayContent, DayEvent, ISODate } from '../lib/types';
 
 const $ = <T extends Element = HTMLElement>(sel: string, root: ParentNode = document) => {
@@ -25,6 +25,7 @@ const els = {
   next: $<HTMLButtonElement>('[data-next]'),
   today: $<HTMLButtonElement>('[data-today]'),
   dateInput: $<HTMLInputElement>('[data-date-input]'),
+  eventLabel: $('#event-label'),
   eventBody: $('[data-event-body]'),
   quote: $('[data-quote]'),
   quoteText: $('[data-quote-text]'),
@@ -123,20 +124,21 @@ function safeUrl(url: string | null): string | null {
   }
 }
 
+function sourceNode(name: string, url: string | null): Node {
+  const href = safeUrl(url);
+  if (!href) return document.createTextNode(name);
+  const a = el('a', undefined, name);
+  a.href = href;
+  a.rel = 'noopener noreferrer';
+  a.target = '_blank';
+  a.append(el('span', 'visually-hidden', ' (yeni sekmede açılır)'));
+  return a;
+}
+
 function sourceLine(e: DayEvent) {
   const p = el('p', 'event-source');
-  p.append('Kaynak: ');
-  const href = safeUrl(e.sourceUrl);
-  if (href) {
-    const a = el('a', undefined, e.sourceName);
-    a.href = href;
-    a.rel = 'noopener noreferrer';
-    a.target = '_blank';
-    a.append(el('span', 'visually-hidden', ' (yeni sekmede açılır)'));
-    p.append(a);
-  } else {
-    p.append(e.sourceName);
-  }
+  p.append('Kaynak: ', sourceNode(e.sourceName, e.sourceUrl));
+  if (e.source2Name) p.append(' · ', sourceNode(e.source2Name, e.source2Url));
   return p;
 }
 
@@ -145,11 +147,17 @@ function renderSkeleton() {
   els.eventBody.replaceChildren(el('div', 'skeleton skeleton--title'), el('div', 'skeleton'));
   els.quote.hidden = true;
   els.demoBadge.hidden = true;
+  els.eventLabel.textContent = '\u00a0';
+  delete leaf.dataset.theme;
+  delete leaf.dataset.tier;
 }
 
 function renderContent(day: DayContent) {
   leaf.setAttribute('aria-busy', 'false');
   const [first, ...rest] = day.events;
+  els.eventLabel.textContent = eventLabel(first);
+  if (day.theme) leaf.dataset.theme = day.theme;
+  if (first?.tier === 'ozel') leaf.dataset.tier = 'ozel';
   if (!first) {
     els.eventBody.replaceChildren(el('p', 'event-empty', 'Bu gün için yayımlanmış bir bilgi yok.'));
   } else {
@@ -193,6 +201,7 @@ async function refreshContent() {
     if (result.offline) setStatus('Bağlantı kurulamadı. Daha önce kaydedilen içerik gösteriliyor.');
   } else {
     leaf.setAttribute('aria-busy', 'false');
+    els.eventLabel.textContent = eventLabel(undefined);
     els.eventBody.replaceChildren(el('p', 'event-empty', 'Bu günün içeriği şu an alınamadı.'));
     setStatus(
       result.reason === 'offline'

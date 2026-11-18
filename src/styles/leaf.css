@@ -467,3 +467,29 @@
     max-width: 38rem;
   }
 }
+
+/* --- Özel gün temaları (mobil src/lib/theme.ts ile aynı renkler) --- */
+.leaf[data-theme='milli'] {
+  --c-accent: #b01e28;
+}
+.leaf[data-theme='dini'] {
+  --c-accent: #7a5a1e;
+}
+/* Anma günü: sade, renksiz, süs görseli yok. */
+.leaf[data-theme='anma'] {
+  --c-accent: #2a2521;
+  padding-bottom: var(--s-5);
+}
+.leaf[data-theme='anma'] .leaf-art {
+  display: none;
+}
+.leaf[data-theme='anma'] .event {
+  background: transparent;
+}
+.leaf[data-tier='ozel'] .event {
+  border-color: var(--c-accent);
+  border-width: 1.5px;
+}
+.leaf[data-tier='ozel'] .event-title {
+  font-size: clamp(1.5rem, 5.6vw, 1.85rem);
+}

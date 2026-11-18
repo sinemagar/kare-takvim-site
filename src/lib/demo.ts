@@ -15,15 +15,21 @@ export function demoDay(date: ISODate): DayContent {
   return {
     date,
     designKey: 'default',
+    theme: null,
     events: e
       ? [
           {
             id: `demo-${date}`,
+            tier: 'ozel',
+            theme: null,
+            label: null,
             category: e[1],
             title: e[2],
             summary: e[3],
             sourceName: 'Demo — kaynak eklenecek',
             sourceUrl: null,
+            source2Name: null,
+            source2Url: null,
             sortOrder: 0,
             isDemo: true,
           },
